@@ -82,12 +82,12 @@ with col_cliente:
 
 st.markdown("---")
 
-# 5. GRAFICO COMPARATIVO AFFIANCATO (CORRETTO E PULITO)
+# 5. GRAFICO COMPARATIVO AFFIANCATO (SINTASSI RIGIDA PER NUOVI PLOTLY)
 st.markdown("#### 3. Impatto Visivo: Costi vs Tempistiche")
 
 fig = go.Figure()
 
-# Barre del Costo Totale (Colori primari di brand)
+# Barre del Costo Totale
 fig.add_trace(go.Bar(
     name='Costo Totale',
     x=['Sistema INTEC', 'Metodo Cliente'],
@@ -96,7 +96,7 @@ fig.add_trace(go.Bar(
     yaxis='y1'
 ))
 
-# Barre delle Ore di Lavoro (Sfumature coordinate più chiare per non fare confusione)
+# Barre delle Ore di Lavoro
 fig.add_trace(go.Bar(
     name='Ore di Lavoro',
     x=['Sistema INTEC', 'Metodo Cliente'],
@@ -105,15 +105,25 @@ fig.add_trace(go.Bar(
     yaxis='y2'
 ))
 
-# Configurazione del Layout per sfondo bianco pulito
+# Configurazione del Layout con sintassi orientata agli oggetti (No stringhe/chiave duplicate)
 fig.update_layout(
     barmode='group',
-    template='plotly_white',       # Forza lo stile bianco nativo
-    paper_bgcolor='rgba(0,0,0,0)',  # Sfondo trasparente
-    plot_bgcolor='rgba(0,0,0,0)',   # Area del grafico trasparente
+    template='plotly_white',
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',
     title=dict(text='Confronto Diretto Economico e Temporale', font=dict(color='#4A4A4A')),
-    yaxis=dict(title=f"Costo Totale ({valuta})", side='left', titlefont=dict(color='#4A4A4A'), tickfont=dict(color='#4A4A4A')),
-    yaxis2=dict(title="Ore di Lavoro (h)", side='right', overlaying='y', showgrid=False, titlefont=dict(color='#4A4A4A'), tickfont=dict(color='#4A4A4A')),
+    yaxis=dict(
+        title=dict(text=f"Costo Totale ({valuta})", font=dict(color='#4A4A4A')),
+        tickfont=dict(color='#4A4A4A'),
+        side='left'
+    ),
+    yaxis2=dict(
+        title=dict(text="Ore di Lavoro (h)", font=dict(color='#4A4A4A')),
+        tickfont=dict(color='#4A4A4A'),
+        side='right',
+        overlaying='y',
+        showgrid=False
+    ),
     legend=dict(x=0.4, y=1.1, orientation="h", font=dict(color='#4A4A4A'))
 )
 
