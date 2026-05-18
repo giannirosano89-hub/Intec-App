@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -6,16 +5,16 @@ import plotly.graph_objects as go
 # 1. IMPOSTAZIONE GRAFICA E LOGO
 st.set_page_config(page_title="INTEC - Calcolatore ROI", layout="wide")
 
-# Utilizziamo la versione POSITIVE adatta allo sfondo bianco della pagina
+# Logo INTEC con la larghezza aumentata richiesta
 try:
-    st.image("INTEC-logo-V1-2colori-NEGATIVE.png", width=450)
+    st.image("INTEC-logo-V1-2colori-POSITIVE.png", width=450)
 except:
     st.title("🟢 INTEC SYSTEMS")
 
 st.markdown("### Calcolatore di Efficienza e ROI — *Supporto alla Vendita*")
 st.markdown("---")
 
-# 2. CARICAMENTO DATABASE EXCEL (File locale sul server)
+# 2. CARICAMENTO DATABASE EXCEL
 @st.cache_data
 def load_data():
     file_path = "Calcolatore Costi INTEC (1).xlsx"
@@ -28,7 +27,7 @@ except Exception as e:
     st.error(f"Errore nel caricamento del database Excel: {e}")
     st.stop()
 
-# 3. SEZIONE INPUT GENERALI (In alto)
+# 3. SEZIONE INPUT GENERALI
 st.markdown("#### 1. Configurazione Cantiere / Progetto")
 col_gen1, col_gen2, col_gen3 = st.columns(3)
 
@@ -55,11 +54,10 @@ with col_intec:
     kg_tot_intec = kg_pf07e + kg_r999
     
     prezzo_intec_base = 10.70
-    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC al KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
+    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (€/KG o $/KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
     
-    # Formula corretta: (Superficie / 5) + 2 ore fisse per montaggio/pulizia
     ore_intec = (superficie / 5.0) + 2.0
-    st.text(f"Ore Manodopera Stimate: {ore_intec} ore")
+    st.text(f"Ore Manodopera Stimate (Bloccato): {ore_intec} ore")
     
     costo_orario_intec = st.number_input("Costo Orario Manodopera INTEC:", min_value=0.0, value=25.0, step=1.0)
     
@@ -84,33 +82,39 @@ with col_cliente:
 
 st.markdown("---")
 
-# 5. GRAFICO COMPARATIVO AFFIANCATO (COSTI E ORE)
+# 5. GRAFICO COMPARATIVO AFFIANCATO (CORRETTO E PULITO)
 st.markdown("#### 3. Impatto Visivo: Costi vs Tempistiche")
 
 fig = go.Figure()
 
+# Barre del Costo Totale (Colori primari di brand)
 fig.add_trace(go.Bar(
     name='Costo Totale',
     x=['Sistema INTEC', 'Metodo Cliente'],
     y=[tot_generale_intec, tot_generale_cliente],
-    marker_color=['#009639', '#7F8C8D'],
+    marker_color=['#008F99', '#4A4A4A'],  # Verde Ottanio INTEC e Grigio Antracite Cliente
     yaxis='y1'
 ))
 
+# Barre delle Ore di Lavoro (Sfumature coordinate più chiare per non fare confusione)
 fig.add_trace(go.Bar(
     name='Ore di Lavoro',
     x=['Sistema INTEC', 'Metodo Cliente'],
     y=[ore_intec, ore_cliente],
-    marker_color=['#2980B9', '#34495E'],
+    marker_color=['#00BAC7', '#A6A6A6'],  # Variante chiara INTEC e Grigio chiaro Cliente
     yaxis='y2'
 ))
 
+# Configurazione del Layout per sfondo bianco pulito
 fig.update_layout(
     barmode='group',
-    title='Confronto Diretto Economico e Temporale',
-    yaxis=dict(title=f"Costo Totale ({valuta})", side='left'),
-    yaxis2=dict(title="Ore di Lavoro (h)", side='right', overlaying='y', showgrid=False),
-    legend=dict(x=0.4, y=1.1, orientation="h")
+    template='plotly_white',       # Forza lo stile bianco nativo
+    paper_bgcolor='rgba(0,0,0,0)',  # Sfondo trasparente
+    plot_bgcolor='rgba(0,0,0,0)',   # Area del grafico trasparente
+    title=dict(text='Confronto Diretto Economico e Temporale', font=dict(color='#4A4A4A')),
+    yaxis=dict(title=f"Costo Totale ({valuta})", side='left', titlefont=dict(color='#4A4A4A'), tickfont=dict(color='#4A4A4A')),
+    yaxis2=dict(title="Ore di Lavoro (h)", side='right', overlaying='y', showgrid=False, titlefont=dict(color='#4A4A4A'), tickfont=dict(color='#4A4A4A')),
+    legend=dict(x=0.4, y=1.1, orientation="h", font=dict(color='#4A4A4A'))
 )
 
 st.plotly_chart(fig, use_container_width=True)
