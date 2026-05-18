@@ -1,15 +1,50 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import base64
 
 # 1. IMPOSTAZIONE GRAFICA E LOGO
 st.set_page_config(page_title="INTEC - Calcolatore ROI", layout="wide")
 
-# Logo INTEC ufficiale
-try:
-    st.image("INTEC-logo-V1-2colori-POSITIVE.png", width=450)
-except:
-    st.title("🟢 INTEC SYSTEMS")
+# Funzione per convertire le immagini per lo scambio dinamico
+def get_image_base64(path):
+    try:
+        with open(path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    except Exception:
+        return None
+
+# Carichiamo entrambi i loghi
+logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
+logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
+
+if logo_positive and logo_negative:
+    # CSS: Se il browser è scuro, nasconde il logo chiaro e mostra quello scuro
+    st.markdown(f"""
+        <style>
+            .logo-container {{
+                width: 450px;
+                margin-bottom: 20px;
+            }}
+            .logo-light {{ display: block; width: 100%; }}
+            .logo-dark {{ display: none; width: 100%; }}
+            
+            @media (prefers-color-scheme: dark) {{
+                .logo-light {{ display: none; }}
+                .logo-dark {{ display: block; }}
+            }}
+        </style>
+        <div class="logo-container">
+            <img src="data:image/png;base64,{logo_positive}" class="logo-light">
+            <img src="data:image/png;base64,{logo_negative}" class="logo-dark">
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    # Fallback di sicurezza se manca un file
+    try:
+        st.image("INTEC-logo-V1-2colori-POSITIVE.png", width=450)
+    except:
+        st.title("🟢 INTEC SYSTEMS")
 
 st.markdown("### Calcolatore di Efficienza e ROI — *Supporto alla Vendita*")
 st.markdown("---")
@@ -96,21 +131,14 @@ with col_chart1:
         marker_color=['#008F99', '#4A4A4A'], 
         text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
         textposition='auto',
-        textfont=dict(color='white') # Forza il testo interno bianco
+        textfont=dict(color='white')
     ))
     fig_costi.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        title=dict(text="Confronto Costo Totale", font=dict(color='#FFFFFF', size=16)),
-        xaxis=dict(tickfont=dict(color='#FFFFFF', size=12)),
-        yaxis=dict(
-            title=dict(text="Spesa Totale", font=dict(color='#FFFFFF')), 
-            tickfont=dict(color='#FFFFFF'), 
-            showgrid=True,
-            gridcolor='rgba(255,255,255,0.1)' # Griglia semitrasparente
-        )
+        title=dict(text="Confronto Costo Totale", font=dict(size=16)),
+        xaxis=dict(tickfont=dict(size=12)),
+        yaxis=dict(title="Spesa Totale", showgrid=True)
     )
-    st.plotly_chart(fig_costi, use_container_width=True)
+    st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit")
 
 # --- GRAFICO 2: CONFRONTO ORE ---
 with col_chart2:
@@ -118,24 +146,17 @@ with col_chart2:
     fig_ore.add_trace(go.Bar(
         x=['Sistema INTEC', 'Metodo Cliente'],
         y=[ore_intec, ore_cliente],
-        marker_color=['#008F99', '#4A4A4A'], # Stessi colori del Grafico 1
+        marker_color=['#008F99', '#4A4A4A'],
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto',
-        textfont=dict(color='white') # Forza il testo interno bianco
+        textfont=dict(color='white') 
     ))
     fig_ore.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        title=dict(text="Confronto Tempistiche", font=dict(color='#FFFFFF', size=16)),
-        xaxis=dict(tickfont=dict(color='#FFFFFF', size=12)),
-        yaxis=dict(
-            title=dict(text="Ore Totali (h)", font=dict(color='#FFFFFF')), 
-            tickfont=dict(color='#FFFFFF'), 
-            showgrid=True,
-            gridcolor='rgba(255,255,255,0.1)' # Griglia semitrasparente
-        )
+        title=dict(text="Confronto Tempistiche", font=dict(size=16)),
+        xaxis=dict(tickfont=dict(size=12)),
+        yaxis=dict(title="Ore Totali (h)", showgrid=True)
     )
-    st.plotly_chart(fig_ore, use_container_width=True)
+    st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit")
 
 # 6. BANNER DI CHIUSURA COMMERCIALE (ROI)
 st.markdown("---")
