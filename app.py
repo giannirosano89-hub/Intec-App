@@ -59,7 +59,7 @@ with col_intec:
     
     # Formula corretta: (Superficie / 5) + 2 ore fisse per montaggio/pulizia
     ore_intec = (superficie / 5.0) + 2.0
-    st.text(f"Ore Manodopera Stimate (Bloccato): {ore_intec} ore")
+    st.text(f"Ore Manodopera Stimate: {ore_intec} ore")
     
     costo_orario_intec = st.number_input("Costo Orario Manodopera INTEC:", min_value=0.0, value=25.0, step=1.0)
     
