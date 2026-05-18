@@ -82,7 +82,7 @@ with col_cliente:
 
 st.markdown("---")
 
-# 5. DUE GRAFICI SEPARATI E AFFIANCATI (SINTASSI CORRETTA)
+# 5. DUE GRAFICI SEPARATI E AFFIANCATI
 st.markdown("#### 3. Analisi Visiva d'Impatto")
 
 col_chart1, col_chart2 = st.columns(2)
@@ -96,17 +96,18 @@ with col_chart1:
         marker_color=['#008F99', '#4A4A4A'], 
         text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
         textposition='auto',
+        textfont=dict(color='white') # Forza il testo interno bianco
     ))
     fig_costi.update_layout(
-        template='plotly_white',
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        title=dict(text=f"Confronto Costo Totale", font=dict(color='#4A4A4A', size=16)),
-        xaxis=dict(tickfont=dict(color='#4A4A4A', size=12)),
+        title=dict(text="Confronto Costo Totale", font=dict(color='#FFFFFF', size=16)),
+        xaxis=dict(tickfont=dict(color='#FFFFFF', size=12)),
         yaxis=dict(
-            title=dict(text="Spesa Totale", font=dict(color='#4A4A4A')), 
-            tickfont=dict(color='#4A4A4A'), 
-            showgrid=True
+            title=dict(text="Spesa Totale", font=dict(color='#FFFFFF')), 
+            tickfont=dict(color='#FFFFFF'), 
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.1)' # Griglia semitrasparente
         )
     )
     st.plotly_chart(fig_costi, use_container_width=True)
@@ -117,20 +118,21 @@ with col_chart2:
     fig_ore.add_trace(go.Bar(
         x=['Sistema INTEC', 'Metodo Cliente'],
         y=[ore_intec, ore_cliente],
-        marker_color=['#00BAC7', '#A6A6A6'], 
+        marker_color=['#008F99', '#4A4A4A'], # Stessi colori del Grafico 1
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto',
+        textfont=dict(color='white') # Forza il testo interno bianco
     ))
     fig_ore.update_layout(
-        template='plotly_white',
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        title=dict(text="Confronto Tempistiche", font=dict(color='#4A4A4A', size=16)),
-        xaxis=dict(tickfont=dict(color='#4A4A4A', size=12)),
+        title=dict(text="Confronto Tempistiche", font=dict(color='#FFFFFF', size=16)),
+        xaxis=dict(tickfont=dict(color='#FFFFFF', size=12)),
         yaxis=dict(
-            title=dict(text="Ore Totali (h)", font=dict(color='#4A4A4A')), 
-            tickfont=dict(color='#4A4A4A'), 
-            showgrid=True
+            title=dict(text="Ore Totali (h)", font=dict(color='#FFFFFF')), 
+            tickfont=dict(color='#FFFFFF'), 
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.1)' # Griglia semitrasparente
         )
     )
     st.plotly_chart(fig_ore, use_container_width=True)
