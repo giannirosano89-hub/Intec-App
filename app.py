@@ -55,7 +55,7 @@ with col_intec:
     kg_tot_intec = kg_pf07e + kg_r999
     
     prezzo_intec_base = 10.70
-    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (€/KG o $/KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
+    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC al KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
     
     # Formula corretta: (Superficie / 5) + 2 ore fisse per montaggio/pulizia
     ore_intec = (superficie / 5.0) + 2.0
