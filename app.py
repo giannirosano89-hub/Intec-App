@@ -8,7 +8,7 @@ st.set_page_config(page_title="INTEC - Calcolatore ROI", layout="wide")
 
 # Utilizziamo la versione POSITIVE adatta allo sfondo bianco della pagina
 try:
-    st.image("INTEC-logo-V1-2colori-POSITIVE.png", width=180)
+    st.image("INTEC-logo-V1-2colori-NEGATIVE.png", width=1080)
 except:
     st.title("🟢 INTEC SYSTEMS")
 
