@@ -94,15 +94,15 @@ st.markdown("---")
 st.markdown("#### 2. Analisi Comparativa Materiali e Tempi")
 col_intec, col_cliente = st.columns(2)
 
+# Variabile per il controllo del Mercato USA
+is_us_market = (unita == "Piedi Quadri (sq ft)" and valuta == "Dollaro ($)")
+
 # --- COLONNA INTEC ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
     tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
     
-    # ---------------------------------------------------------
-    # MOTORE DI CONVERSIONE (Protegge dai calcoli errati)
-    # ---------------------------------------------------------
-    # Calcola sia m2 che sq ft indipendentemente da cosa ha scelto l'utente
+    # Conversione Superfici
     if unita == "Metri Quadri (m²)":
         superficie_m2 = superficie
         superficie_sqft = superficie * 10.7639
@@ -111,47 +111,66 @@ with col_intec:
         superficie_m2 = superficie / 10.7639
     
     moltiplicatori_r999 = {
-        "MAT 300": 1.5,      # calcolato su kg/m2
-        "MAT 450": 2.25,     # calcolato su kg/m2
-        "OZ 1.0": 0.312,     # calcolato su lbs/sq ft
-        "OZ 1.5": 0.468      # calcolato su lbs/sq ft
+        "MAT 300": 1.5,      
+        "MAT 450": 2.25,     
+        "OZ 1.0": 0.312,     
+        "OZ 1.5": 0.468      
     }
     
-    # Calcolo selettivo in base al materiale
+    # Calcolo resina R999
     if "MAT" in tipo_rinforzo:
         kg_r999 = superficie_m2 * moltiplicatori_r999[tipo_rinforzo]
         display_r999 = kg_r999
         unita_r999 = "kg"
-    else: # Selezionato OZ
+    else: 
         lbs_r999 = superficie_sqft * moltiplicatori_r999[tipo_rinforzo]
-        kg_r999 = lbs_r999 / 2.20462  # Riporta in KG per fare il conto dei costi
+        kg_r999 = lbs_r999 / 2.20462  
         display_r999 = lbs_r999
         unita_r999 = "lbs"
         
-    # Calcolo fusti PF07E (sempre basato sui metri quadri!)
+    # Calcolo base PF07E in kg
     kg_pf07e = superficie_m2 * 14.0
     fusti_pf07e = kg_pf07e / 140.0 
-    
     kg_tot_intec = kg_pf07e + kg_r999
     
+    # Formattazione condizionale PF07E in base al mercato
+    if is_us_market:
+        galloni_per_fusto = 55.0  # Dato esatto: peso specifico 0.7 = 200L = 55 galloni
+        tot_galloni = fusti_pf07e * galloni_per_fusto
+        spessore_inch = 16 / 25.4
+        testo_pf07e = f"{tot_galloni:.1f} gallons ({fusti_pf07e:.1f} drums) — *thickness {spessore_inch:.2f} inch*"
+    else:
+        testo_pf07e = f"{fusti_pf07e:.1f} fusti (da 140 kg) — *spessore 16mm*"
+
     st.markdown(f"""
     **Specifiche Tecniche:**
-    - 📦 **PF07E:** {fusti_pf07e:.1f} fusti (da 140 kg) — *spessore 16mm*
+    - 📦 **PF07E:** {testo_pf07e}
     - 🧪 **Resina R999 ({tipo_rinforzo}):** {display_r999:.2f} {unita_r999} — *laminazione 2 strati*
     """)
     
-    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (Medio €/KG):", min_value=0.0, value=10.70, step=0.1)
+    prezzo_intec_label = "Prezzo Materiale INTEC (Medio $/lbs):" if is_us_market else "Prezzo Materiale INTEC (Medio €/KG):"
+    prezzo_intec_input = st.number_input(prezzo_intec_label, min_value=0.0, value=10.70, step=0.1)
     
     ore_intec = (superficie_m2 / 5.0) + 2.0
     st.success(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
-    tot_generale_intec = kg_tot_intec * prezzo_intec_input
+    
+    # Calcolo totale economico con conversione integrata se mercato USA
+    if is_us_market:
+        tot_generale_intec = (kg_tot_intec * 2.20462) * prezzo_intec_input
+    else:
+        tot_generale_intec = kg_tot_intec * prezzo_intec_input
 
 # --- COLONNA CLIENTE ---
 with col_cliente:
     st.subheader("⚪ Metodo Attuale Cliente")
     tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray", "Laminazione Manuale"])
-    kg_cliente = st.number_input(f"Totale materiale Cliente (KG):", min_value=0.0, value=0.0, step=10.0)
-    prezzo_cliente = st.number_input(f"Prezzo al KG Cliente:", min_value=0.0, value=0.0, step=0.5)
+    
+    label_mat_cliente = "Totale materiale Cliente (lbs):" if is_us_market else "Totale materiale Cliente (KG):"
+    kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
+    
+    label_prezzo_cliente = "Prezzo Medio Materiale Cliente ($/lbs):" if is_us_market else "Prezzo Medio Materiale Cliente (€/KG):"
+    prezzo_cliente = st.number_input(label_prezzo_cliente, min_value=0.0, value=0.0, step=0.5)
+    
     ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
     tot_generale_cliente = kg_cliente * prezzo_cliente
 
