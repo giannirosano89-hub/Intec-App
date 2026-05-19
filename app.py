@@ -132,9 +132,22 @@ col_intec, col_cliente = st.columns(2)
 # --- COLONNA INTEC ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
-    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1", "OZ 1.5"])
     
-    moltiplicatori_r999 = {"MAT 300": 0.350, "MAT 450": 0.468, "OZ 6": 0.600, "OZ 10": 1.000}
+    # Selezione del tipo di rinforzo aggiornata con i formati corretti
+    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
+    
+    # =========================================================================
+    # ⚠️ PUNTO DI MODIFICA DEI DATI: MOLTIPLICATORI RESINA R999
+    # Cambia i numeri dopo i due punti (:) inserendo i tuoi dati reali del file Excel.
+    # I nomi tra virgolette devono coincidere esattamente con le voci del menu sopra.
+    # =========================================================================
+    moltiplicatori_r999 = {
+        "MAT 300": 1.5,   # <-- Inserisci qui il moltiplicatore per MAT 300
+        "MAT 450": 2.25,   # <-- Inserisci qui il moltiplicatore per MAT 450
+        "OZ 1.0": 0.312,    # <-- Inserisci qui il moltiplicatore per OZ 1.0
+        "OZ 1.5": 0.468     # <-- Inserisci qui il moltiplicatore per OZ 1.5
+    }
+    # =========================================================================
     
     kg_r999 = superficie * moltiplicatori_r999[tipo_rinforzo]
     kg_pf07e = superficie * 14.0
