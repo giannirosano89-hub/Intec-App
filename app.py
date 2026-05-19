@@ -20,13 +20,7 @@ logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 # CSS AGGIORNATO: MENU VISIBILE SU SCHERMO E STAMPA COMPATTA
 st.markdown(f"""
     <style>
-        /* 1. Riduce lo spazio in alto ma SALVA il menu a tendina laterale */
-        .block-container {{
-            padding-top: 2.5rem !important;
-            padding-bottom: 0.5rem !important;
-        }}
-        
-        /* 2. Centratura Logo e Spazi */
+        .block-container {{ padding-top: 2.5rem !important; padding-bottom: 0.5rem !important; }}
         .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: -10px; }}
         .logo-container {{ width: 380px; max-width: 100%; }}
         .logo-light {{ display: block; width: 100%; }}
@@ -37,47 +31,18 @@ st.markdown(f"""
             .logo-dark {{ display: block; }}
         }}
         
-        /* 3. BLINDATURA PER LA STAMPA SU SINGOLA PAGINA (A4) */
         @media print {{
             @page {{ margin: 0.4cm; size: A4 portrait; }} 
-            
-            /* QUI nascondiamo i menu e i controlli, SOLO durante la stampa! */
             .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header[data-testid="stHeader"], [data-testid="stSidebar"] {{
                 display: none !important;
             }}
-            
-            /* Forza lo sfondo bianco assoluto e testo nero */
-            .main, .block-container {{ 
-                background-color: white !important; 
-                color: black !important; 
-                padding: 0 !important; 
-                margin: 0 !important;
-            }}
-            
-            /* Logo di stampa ottimizzato */
+            .main, .block-container {{ background-color: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }}
             .logo-dark {{ display: none !important; }}
             .logo-light {{ display: block !important; width: 200px !important; margin: 0 auto 5px auto !important; }}
-            
-            /* Forza le colonne a restare affiancate per risparmiare spazio verticale */
-            div[data-testid="column"] {{
-                width: 48% !important;
-                flex: 1 1 48% !important;
-                min-width: 48% !important;
-                display: inline-block !important;
-                vertical-align: top;
-            }}
-            
-            /* Compatta al massimo i blocchi dei Totali */
-            div[data-testid="stMetric"] {{
-                padding: 2px !important;
-                margin: 0 !important;
-            }}
-            
-            /* Compressione dei testi e dei titoli */
+            div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; min-width: 48% !important; display: inline-block !important; vertical-align: top; }}
+            div[data-testid="stMetric"] {{ padding: 2px !important; margin: 0 !important; }}
             h3, h4, p, ul, li {{ margin-top: 2px !important; margin-bottom: 2px !important; padding: 0 !important; font-size: 13px !important; }}
             hr {{ margin: 4px 0 !important; }}
-            
-            /* Colore testo grafici nero per la stampa */
             .js-plotly-plot .plotly text {{ fill: #000000 !important; }}
         }}
     </style>
@@ -132,35 +97,52 @@ col_intec, col_cliente = st.columns(2)
 # --- COLONNA INTEC ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
-    
-    # ⚠️ I NOMI QUI DEVONO ESSERE IDENTICI A QUELLI NEL DIZIONARIO SOTTO
     tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
     
-    # =========================================================================
-    # INSERISCI QUI I TUOI DATI REALI (Sostituisci i numeri dopo i due punti)
-    # =========================================================================
-    moltiplicatori_r999 = {
-        "MAT 300": 1.5,  # <-- Inserisci qui il calcolo esatto per MAT 300
-        "MAT 450": 2.25,  # <-- Inserisci qui il calcolo esatto per MAT 450
-        "OZ 1.0": 0.312,   # <-- Inserisci qui il calcolo esatto per OZ 1.0
-        "OZ 1.5": 0.468    # <-- Inserisci qui il calcolo esatto per OZ 1.5
-    }
-    # =========================================================================
+    # ---------------------------------------------------------
+    # MOTORE DI CONVERSIONE (Protegge dai calcoli errati)
+    # ---------------------------------------------------------
+    # Calcola sia m2 che sq ft indipendentemente da cosa ha scelto l'utente
+    if unita == "Metri Quadri (m²)":
+        superficie_m2 = superficie
+        superficie_sqft = superficie * 10.7639
+    else:
+        superficie_sqft = superficie
+        superficie_m2 = superficie / 10.7639
     
-    kg_r999 = superficie * moltiplicatori_r999[tipo_rinforzo]
-    kg_pf07e = superficie * 14.0
+    moltiplicatori_r999 = {
+        "MAT 300": 1.5,      # calcolato su kg/m2
+        "MAT 450": 2.25,     # calcolato su kg/m2
+        "OZ 1.0": 0.312,     # calcolato su lbs/sq ft
+        "OZ 1.5": 0.468      # calcolato su lbs/sq ft
+    }
+    
+    # Calcolo selettivo in base al materiale
+    if "MAT" in tipo_rinforzo:
+        kg_r999 = superficie_m2 * moltiplicatori_r999[tipo_rinforzo]
+        display_r999 = kg_r999
+        unita_r999 = "kg"
+    else: # Selezionato OZ
+        lbs_r999 = superficie_sqft * moltiplicatori_r999[tipo_rinforzo]
+        kg_r999 = lbs_r999 / 2.20462  # Riporta in KG per fare il conto dei costi
+        display_r999 = lbs_r999
+        unita_r999 = "lbs"
+        
+    # Calcolo fusti PF07E (sempre basato sui metri quadri!)
+    kg_pf07e = superficie_m2 * 14.0
     fusti_pf07e = kg_pf07e / 140.0 
+    
     kg_tot_intec = kg_pf07e + kg_r999
     
     st.markdown(f"""
     **Specifiche Tecniche:**
     - 📦 **PF07E:** {fusti_pf07e:.1f} fusti (da 140 kg) — *spessore 16mm*
-    - 🧪 **Resina R999 ({tipo_rinforzo}):** {kg_r999:.2f} kg — *laminazione 2 strati*
+    - 🧪 **Resina R999 ({tipo_rinforzo}):** {display_r999:.2f} {unita_r999} — *laminazione 2 strati*
     """)
     
     prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (Medio €/KG):", min_value=0.0, value=10.70, step=0.1)
     
-    ore_intec = (superficie / 5.0) + 2.0
+    ore_intec = (superficie_m2 / 5.0) + 2.0
     st.success(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
     tot_generale_intec = kg_tot_intec * prezzo_intec_input
 
