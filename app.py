@@ -107,7 +107,7 @@ with col_intec:
     prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (Medio €/KG):", min_value=0.0, value=10.70, step=0.1)
     
     ore_intec = (superficie / 5.0) + 2.0
-    st.warning(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
+    st.success(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
     
     # Il totale è ora calcolato solo sui materiali
     tot_generale_intec = kg_tot_intec * prezzo_intec_input
