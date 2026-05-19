@@ -90,7 +90,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # 2. INTESTAZIONE PERSONALIZZATA
-st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Efficienza e ROI — Supporto alla Vendita</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Efficienza e ROI</h3>", unsafe_allow_html=True)
 
 col_hdr1, col_hdr2 = st.columns(2)
 with col_hdr1:
@@ -132,7 +132,7 @@ col_intec, col_cliente = st.columns(2)
 # --- COLONNA INTEC ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
-    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 6", "OZ 10"])
+    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1", "OZ 1.5"])
     
     moltiplicatori_r999 = {"MAT 300": 0.350, "MAT 450": 0.468, "OZ 6": 0.600, "OZ 10": 1.000}
     
