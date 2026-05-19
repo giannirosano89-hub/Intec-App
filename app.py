@@ -133,19 +133,17 @@ col_intec, col_cliente = st.columns(2)
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
     
-    # Selezione del tipo di rinforzo aggiornata con i formati corretti
+    # ⚠️ I NOMI QUI DEVONO ESSERE IDENTICI A QUELLI NEL DIZIONARIO SOTTO
     tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
     
     # =========================================================================
-    # ⚠️ PUNTO DI MODIFICA DEI DATI: MOLTIPLICATORI RESINA R999
-    # Cambia i numeri dopo i due punti (:) inserendo i tuoi dati reali del file Excel.
-    # I nomi tra virgolette devono coincidere esattamente con le voci del menu sopra.
+    # INSERISCI QUI I TUOI DATI REALI (Sostituisci i numeri dopo i due punti)
     # =========================================================================
     moltiplicatori_r999 = {
-        "MAT 300": 1.5,   # <-- Inserisci qui il moltiplicatore per MAT 300
-        "MAT 450": 2.25,   # <-- Inserisci qui il moltiplicatore per MAT 450
-        "OZ 1.0": 0.312,    # <-- Inserisci qui il moltiplicatore per OZ 1.0
-        "OZ 1.5": 0.468     # <-- Inserisci qui il moltiplicatore per OZ 1.5
+        "MAT 300": 1.5,  # <-- Inserisci qui il calcolo esatto per MAT 300
+        "MAT 450": 2.25,  # <-- Inserisci qui il calcolo esatto per MAT 450
+        "OZ 1.0": 0.312,   # <-- Inserisci qui il calcolo esatto per OZ 1.0
+        "OZ 1.5": 0.468    # <-- Inserisci qui il calcolo esatto per OZ 1.5
     }
     # =========================================================================
     
