@@ -139,7 +139,8 @@ with col_chart1:
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
         textposition='auto',
-        textfont=dict(color='white')
+        textfont=dict(color='white'),
+        width=0.4  # <-- PARAMETRO AGGIUNTO PER SNELLIRE LA BARRA
     ))
     fig_costi.update_layout(
         title=dict(text="Confronto Costo Materiali", font=dict(size=16)),
@@ -155,7 +156,8 @@ with col_chart2:
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto',
-        textfont=dict(color='white') 
+        textfont=dict(color='white'),
+        width=0.4  # <-- PARAMETRO AGGIUNTO PER SNELLIRE LA BARRA
     ))
     fig_ore.update_layout(
         title=dict(text="Confronto Tempistiche", font=dict(size=16)),
