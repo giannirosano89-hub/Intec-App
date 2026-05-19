@@ -100,8 +100,8 @@ with col_intec:
     
     st.markdown(f"""
     **Configurazione di Cantiere:**
-    - 📦 **PF07E:** {fusti_pf07e:.1f} fusti (da 140 kg)
-    - 🧪 **Resina R999 ({tipo_rinforzo}):** {kg_r999:.2f} kg totali
+    - 📦 **PF07E:** {fusti_pf07e:.1f} fusti (da 140 kg) - *con un'applicazione di 16 mm di spessore*
+    - 🧪 **Resina R999 ({tipo_rinforzo}):** {kg_r999:.2f} kg totali - *con una laminazione di 2 strati*
     """)
     
     prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (Medio €/KG):", min_value=0.0, value=10.70, step=0.1)
