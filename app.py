@@ -84,10 +84,10 @@ with col_intec:
     # === MODIFICA I VALORI QUI SOTTO CON QUELLI DEL TUO EXCEL ===
     # Questi numeri rappresentano i kg di R999 necessari per ogni metro quadro in base al tessuto
     moltiplicatori_r999 = {
-        "MAT 300": 0.350,  # <-- Sostituisci con il tuo valore
-        "MAT 450": 0.468,  # <-- Sostituisci con il tuo valore
-        "OZ 6": 0.600,     # <-- Sostituisci con il tuo valore
-        "OZ 10": 1.000     # <-- Sostituisci con il tuo valore
+        "MAT 300": 1.5,  # <-- Sostituisci con il tuo valore
+        "MAT 450": 2.25,  # <-- Sostituisci con il tuo valore
+        "OZ 1": 0.312,     # <-- Sostituisci con il tuo valore
+        "OZ 1.5": 0.468     # <-- Sostituisci con il tuo valore
     }
     
     # Calcoli Intec
