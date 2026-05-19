@@ -42,8 +42,8 @@ st.markdown(f"""
     </style>
     <div class="logo-outer-container">
         <div class="logo-container">
-            <img src="data:image/png;base64,{logo_positive}" class="logo-light">
-            <img src="data:image/png;base64,{logo_negative}" class="logo-dark">
+            <img src="data:image/png;base64,{logo_negative}" class="logo-light">
+            <img src="data:image/png;base64,{logo_positive}" class="logo-dark">
         </div>
     </div>
 """, unsafe_allow_html=True)
