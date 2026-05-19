@@ -43,7 +43,7 @@ if logo_positive and logo_negative:
 else:
     st.title("🟢 INTEC SYSTEMS")
 
-st.markdown("<h3 style='text-align: center;'>Calcolatore di Efficienza e ROI — Supporto alla Vendita</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Calcolatore di Efficienza e ROI</h3>", unsafe_allow_html=True)
 st.markdown("---")
 
 # 2. CARICAMENTO DATABASE
@@ -59,7 +59,7 @@ except Exception as e:
     st.stop()
 
 # 3. INPUT GENERALI
-st.markdown("#### 1. Configurazione Cantiere / Progetto")
+st.markdown("#### 1. Configurazione Modello")
 col_gen1, col_gen2, col_gen3 = st.columns(3)
 
 with col_gen1:
@@ -99,7 +99,7 @@ with col_intec:
     kg_tot_intec = kg_pf07e + kg_r999
     
     st.markdown(f"""
-    **Configurazione di Cantiere:**
+    **Configurazione Intec:**
     - 📦 **PF07E:** {fusti_pf07e:.1f} fusti (da 140 kg) - *con un'applicazione di 16 mm di spessore*
     - 🧪 **Resina R999 ({tipo_rinforzo}):** {kg_r999:.2f} kg totali - *con una laminazione di 2 strati*
     """)
@@ -128,7 +128,7 @@ with col_cliente:
 st.markdown("---")
 
 # 5. GRAFICI
-st.markdown("#### 3. Analisi Visiva d'Impatto")
+st.markdown("#### 3. Analisi Visiva")
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
