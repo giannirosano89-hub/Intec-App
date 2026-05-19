@@ -55,7 +55,7 @@ col_hdr1, col_hdr2 = st.columns(2)
 with col_hdr1:
     nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
 with col_hdr2:
-    data_offerta = st.date_input("📅 Data Offerta:", value=datetime.date.today(), format="DD/MM/YYYY)
+    data_offerta = st.date_input("📅 Data Offerta:", value=datetime.date.today(), format="DD/MM/YYYY")
 
 st.markdown("---")
 
