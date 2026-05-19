@@ -102,7 +102,7 @@ with col_intec:
     # Visualizzazione dati tecnici nel pannello
     st.markdown(f"""
     **Configurazione Materiali:**
-    - 📦 **PF07E:** {kg_pf07e:.1f} kg (circa **{fusti_pf07e:.1f} fusti** da 25kg)
+    - 📦 **PF07E:** {kg_pf07e:.1f} kg (circa **{fusti_pf07e:.1f} fusti** da 105kg)
     - 🧪 **Resina R999:** {kg_r999:.2f} kg per laminazione
     - 🏗️ **Rinforzo:** {tipo_rinforzo}
     """)
