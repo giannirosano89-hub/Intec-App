@@ -17,18 +17,18 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS Avanzato per Spazi, Centratura e STAMPA PULITA in 1 Pagina
+# CSS SUPER-OTTIMIZZATO PER SPAZI E STAMPA A4
 st.markdown(f"""
     <style>
-        /* 1. Sposta tutto più in alto rimuovendo lo spazio vuoto di Streamlit */
-        .block-container {{
-            padding-top: 1.5rem !important;
+        /* 1. Uccide lo spazio gigante in alto tipico di Streamlit */
+        div[data-testid="stAppViewBlockContainer"] {{
+            padding-top: 1rem !important;
             padding-bottom: 1rem !important;
         }}
         
-        /* 2. Centratura Logo e Gestione Tema Mobile */
-        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: 10px; }}
-        .logo-container {{ width: 450px; max-width: 100%; }}
+        /* 2. Centratura Logo */
+        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: -15px; }}
+        .logo-container {{ width: 400px; max-width: 100%; }}
         .logo-light {{ display: block; width: 100%; }}
         .logo-dark {{ display: none; width: 100%; }}
         
@@ -37,29 +37,41 @@ st.markdown(f"""
             .logo-dark {{ display: block; }}
         }}
         
-        /* 3. Ottimizzazione STAMPA: Forza colori, margini compatti e nasconde gli input */
+        /* 3. BLINDATURA PER LA STAMPA SU SINGOLA PAGINA */
         @media print {{
             @page {{ margin: 0.5cm; size: A4 portrait; }} 
             
+            /* Nasconde i controlli e i menu laterali */
             .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header, [data-testid="stSidebar"] {{
                 display: none !important;
             }}
             
-            /* Sfondo bianco assoluto per risparmiare inchiostro/PDF pulito */
-            .main, .block-container {{ background-color: white !important; color: black !important; padding: 0 !important; }}
+            /* Forza sfondo bianco e testo nero per non sprecare inchiostro */
+            .main, div[data-testid="stAppViewBlockContainer"] {{ 
+                background-color: white !important; 
+                color: black !important; 
+                padding: 0 !important; 
+            }}
             
-            /* Forza il logo chiaro rimpicciolito */
+            /* Logo di stampa */
             .logo-dark {{ display: none !important; }}
-            .logo-light {{ display: block !important; width: 250px !important; margin: 0 auto 5px auto !important; }}
+            .logo-light {{ display: block !important; width: 220px !important; margin: 0 auto 5px auto !important; }}
             
-            /* Riduce le spaziature per far entrare tutto in un foglio */
-            h3, h4 {{ margin-top: 5px !important; margin-bottom: 5px !important; padding: 0 !important; font-size: 14px !important; }}
+            /* FORZA LE COLONNE A RESTARE AFFIANCATE IN STAMPA (evita che vadano a capo) */
+            div[data-testid="column"] {{
+                width: 48% !important;
+                flex: 1 1 48% !important;
+                min-width: 48% !important;
+                display: inline-block !important;
+                vertical-align: top;
+            }}
+            
+            /* Compressione dei margini testuali */
+            h3, h4 {{ margin-top: 2px !important; margin-bottom: 2px !important; padding: 0 !important; font-size: 14px !important; }}
             hr {{ margin: 5px 0 !important; }}
             
-            /* TRUCCO MAGICO: Forza il testo dei grafici a nero durante la stampa se l'utente era in Dark Mode */
-            .js-plotly-plot .plotly text {{
-                fill: #000000 !important;
-            }}
+            /* Testo Grafici nero */
+            .js-plotly-plot .plotly text {{ fill: #000000 !important; }}
         }}
     </style>
     <div class="logo-outer-container">
@@ -71,7 +83,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # 2. INTESTAZIONE PERSONALIZZATA
-st.markdown("<h3 style='text-align: center;'>Calcolatore di Efficienza e ROI — Supporto alla Vendita</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Efficienza e ROI — Supporto alla Vendita</h3>", unsafe_allow_html=True)
 
 col_hdr1, col_hdr2 = st.columns(2)
 with col_hdr1:
@@ -115,7 +127,6 @@ with col_intec:
     st.subheader("🟢 Sistema INTEC")
     tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 6", "OZ 10"])
     
-    # Dizionario Moltiplicatori 
     moltiplicatori_r999 = {"MAT 300": 0.350, "MAT 450": 0.468, "OZ 6": 0.600, "OZ 10": 1.000}
     
     kg_r999 = superficie * moltiplicatori_r999[tipo_rinforzo]
@@ -159,12 +170,12 @@ with col_chart1:
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_costi.update_layout(
+        height=320, # <--- GRAFICO PIÙ BASSO PER ENTRARE IN UN A4
         title=dict(text="Costo Materiali", font=dict(size=14)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=0, r=0, t=30, b=0) # Margini compatti
+        margin=dict(l=0, r=0, t=30, b=0)
     )
-    # L'argomento config={'staticPlot': True} BLOCCA l'interazione da mobile (niente zoom o swipe)
     st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
 with col_chart2:
@@ -176,12 +187,12 @@ with col_chart2:
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_ore.update_layout(
+        height=320, # <--- GRAFICO PIÙ BASSO PER ENTRARE IN UN A4
         title=dict(text="Ore di Lavoro", font=dict(size=14)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
         margin=dict(l=0, r=0, t=30, b=0)
     )
-    # Blocco interazione da mobile
     st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
 # 7. BANNER FINALE E STAMPA
