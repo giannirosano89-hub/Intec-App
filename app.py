@@ -17,27 +17,49 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS Avanzato per Centratura, Temi e STAMPA PULITA
+# CSS Avanzato per Spazi, Centratura e STAMPA PULITA in 1 Pagina
 st.markdown(f"""
     <style>
-        /* Centratura Logo */
-        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }}
-        .logo-container {{ width: 450px; }}
+        /* 1. Sposta tutto più in alto rimuovendo lo spazio vuoto di Streamlit */
+        .block-container {{
+            padding-top: 1.5rem !important;
+            padding-bottom: 1rem !important;
+        }}
+        
+        /* 2. Centratura Logo e Gestione Tema Mobile */
+        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: 10px; }}
+        .logo-container {{ width: 450px; max-width: 100%; }}
         .logo-light {{ display: block; width: 100%; }}
         .logo-dark {{ display: none; width: 100%; }}
+        
         @media (prefers-color-scheme: dark) {{
             .logo-light {{ display: none; }}
             .logo-dark {{ display: block; }}
         }}
         
-        /* Ottimizzazione per la STAMPA */
+        /* 3. Ottimizzazione STAMPA: Forza colori, margini compatti e nasconde gli input */
         @media print {{
+            @page {{ margin: 0.5cm; size: A4 portrait; }} 
+            
             .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header, [data-testid="stSidebar"] {{
                 display: none !important;
             }}
-            .main {{ background-color: white !important; color: black !important; }}
+            
+            /* Sfondo bianco assoluto per risparmiare inchiostro/PDF pulito */
+            .main, .block-container {{ background-color: white !important; color: black !important; padding: 0 !important; }}
+            
+            /* Forza il logo chiaro rimpicciolito */
             .logo-dark {{ display: none !important; }}
-            .logo-light {{ display: block !important; width: 300px !important; margin: 0 auto !important; }}
+            .logo-light {{ display: block !important; width: 250px !important; margin: 0 auto 5px auto !important; }}
+            
+            /* Riduce le spaziature per far entrare tutto in un foglio */
+            h3, h4 {{ margin-top: 5px !important; margin-bottom: 5px !important; padding: 0 !important; font-size: 14px !important; }}
+            hr {{ margin: 5px 0 !important; }}
+            
+            /* TRUCCO MAGICO: Forza il testo dei grafici a nero durante la stampa se l'utente era in Dark Mode */
+            .js-plotly-plot .plotly text {{
+                fill: #000000 !important;
+            }}
         }}
     </style>
     <div class="logo-outer-container">
@@ -93,7 +115,7 @@ with col_intec:
     st.subheader("🟢 Sistema INTEC")
     tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 6", "OZ 10"])
     
-    # Dizionario Moltiplicatori (Sostituisci con i tuoi valori reali)
+    # Dizionario Moltiplicatori 
     moltiplicatori_r999 = {"MAT 300": 0.350, "MAT 450": 0.468, "OZ 6": 0.600, "OZ 10": 1.000}
     
     kg_r999 = superficie * moltiplicatori_r999[tipo_rinforzo]
@@ -136,8 +158,14 @@ with col_chart1:
         text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
-    fig_costi.update_layout(title=dict(text="Costo Materiali", font=dict(size=16)), yaxis=dict(showgrid=True))
-    st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit")
+    fig_costi.update_layout(
+        title=dict(text="Costo Materiali", font=dict(size=14)), 
+        yaxis=dict(showgrid=True),
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
+        margin=dict(l=0, r=0, t=30, b=0) # Margini compatti
+    )
+    # L'argomento config={'staticPlot': True} BLOCCA l'interazione da mobile (niente zoom o swipe)
+    st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
 with col_chart2:
     fig_ore = go.Figure()
@@ -147,8 +175,14 @@ with col_chart2:
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
-    fig_ore.update_layout(title=dict(text="Ore di Lavoro", font=dict(size=16)), yaxis=dict(showgrid=True))
-    st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit")
+    fig_ore.update_layout(
+        title=dict(text="Ore di Lavoro", font=dict(size=14)), 
+        yaxis=dict(showgrid=True),
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
+        margin=dict(l=0, r=0, t=30, b=0)
+    )
+    # Blocco interazione da mobile
+    st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
 # 7. BANNER FINALE E STAMPA
 st.markdown("---")
@@ -166,4 +200,3 @@ if tot_generale_cliente > 0:
 
 st.markdown("---")
 st.markdown("⚠️ **Nota Tecnica:** *I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.*")
-
