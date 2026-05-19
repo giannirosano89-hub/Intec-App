@@ -19,12 +19,17 @@ logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
 if logo_positive and logo_negative:
-    # CSS: Se il browser è scuro, nasconde il logo chiaro e mostra quello scuro
+    # CSS: Logo centrato e scambio dinamico Light/Dark
     st.markdown(f"""
         <style>
+            .logo-outer-container {{
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                margin-bottom: 30px;
+            }}
             .logo-container {{
                 width: 450px;
-                margin-bottom: 20px;
             }}
             .logo-light {{ display: block; width: 100%; }}
             .logo-dark {{ display: none; width: 100%; }}
@@ -34,22 +39,20 @@ if logo_positive and logo_negative:
                 .logo-dark {{ display: block; }}
             }}
         </style>
-        <div class="logo-container">
-            <img src="data:image/png;base64,{logo_positive}" class="logo-light">
-            <img src="data:image/png;base64,{logo_negative}" class="logo-dark">
+        <div class="logo-outer-container">
+            <div class="logo-container">
+                <img src="data:image/png;base64,{logo_positive}" class="logo-light">
+                <img src="data:image/png;base64,{logo_negative}" class="logo-dark">
+            </div>
         </div>
     """, unsafe_allow_html=True)
 else:
-    # Fallback di sicurezza se manca un file
-    try:
-        st.image("INTEC-logo-V1-2colori-POSITIVE.png", width=450)
-    except:
-        st.title("🟢 INTEC SYSTEMS")
+    st.title("🟢 INTEC SYSTEMS")
 
-st.markdown("### Calcolatore di Efficienza e ROI — *Supporto alla Vendita*")
+st.markdown("<h3 style='text-align: center;'>Calcolatore di Efficienza e ROI — Supporto alla Vendita</h3>", unsafe_allow_html=True)
 st.markdown("---")
 
-# 2. CARICAMENTO DATABASE EXCEL
+# 2. CARICAMENTO DATABASE EXCEL (Invariato)
 @st.cache_data
 def load_data():
     file_path = "Calcolatore Costi INTEC (1).xlsx"
@@ -76,40 +79,57 @@ with col_gen3:
 st.markdown("---")
 
 # 4. COLONNE PARALLELE DI CONFRONTO
-st.markdown("#### 2. Analisi Comparativa Metodi")
+st.markdown("#### 2. Analisi Comparativa e Configurazione Tecnica")
 col_intec, col_cliente = st.columns(2)
 
-# --- COLONNA SINISTRA: METODO INTEC (AUTOMATICO) ---
+# --- COLONNA SINISTRA: SISTEMA INTEC (AVANZATO) ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
-    st.info("I calcoli seguenti sono estratti automaticamente dalle rese di listino.")
     
+    # Nuove specifiche tecniche richieste
+    tipo_rinforzo = st.selectbox("Tipo di Rinforzo (MAT/OZ):", ["MAT 300", "MAT 450", "OZ 1", "OZ 1.5"])
+    
+    # Calcolo PF07E
     kg_pf07e = superficie * 14.0
+    peso_fusto = 140.0 # Ipotizzato 25kg per fusto
+    fusti_pf07e = kg_pf07e / peso_fusto
+    
+    # Calcolo R999
     kg_r999 = superficie * 0.468
+    
     kg_tot_intec = kg_pf07e + kg_r999
     
+    # Visualizzazione dati tecnici nel pannello
+    st.markdown(f"""
+    **Configurazione Materiali:**
+    - 📦 **PF07E:** {kg_pf07e:.1f} kg (circa **{fusti_pf07e:.1f} fusti** da 25kg)
+    - 🧪 **Resina R999:** {kg_r999:.2f} kg per laminazione
+    - 🏗️ **Rinforzo:** {tipo_rinforzo}
+    """)
+    
     prezzo_intec_base = 10.70
-    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (€/KG o $/KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
+    prezzo_intec_input = st.number_input("Prezzo Materiale INTEC (Medio €/KG):", min_value=0.0, value=prezzo_intec_base, step=0.1)
     
+    # Ore manodopera (Logica semplificata come prima, poi la collegheremo al DB)
     ore_intec = (superficie / 5.0) + 2.0
-    st.text(f"Ore Manodopera Stimate (Bloccato): {ore_intec} ore")
+    st.warning(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
     
-    costo_orario_intec = st.number_input("Costo Orario Manodopera INTEC:", min_value=0.0, value=25.0, step=1.0)
+    costo_orario_intec = st.number_input("Costo Orario Manodopera (€/h):", min_value=0.0, value=25.0, step=1.0)
     
     tot_mat_intec = kg_tot_intec * prezzo_intec_input
     tot_mano_intec = ore_intec * costo_orario_intec
     tot_generale_intec = tot_mat_intec + tot_mano_intec
 
-# --- COLONNA DESTRA: METODO CLIENTE (MANUALE) ---
+# --- COLONNA DESTRA: METODO CLIENTE (Invariato) ---
 with col_cliente:
     st.subheader("⚪ Metodo Attuale Cliente")
-    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
+    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray", "Laminazione Manuale"])
     
-    kg_cliente = st.number_input(f"Quantità materiale totale usata dal Cliente (KG):", min_value=0.0, value=0.0, step=10.0)
-    prezzo_cliente = st.number_input(f"Prezzo al KG pagato dal Cliente:", min_value=0.0, value=0.0, step=0.5)
+    kg_cliente = st.number_input(f"Totale materiale Cliente (KG):", min_value=0.0, value=0.0, step=10.0)
+    prezzo_cliente = st.number_input(f"Prezzo al KG Cliente:", min_value=0.0, value=0.0, step=0.5)
     
-    ore_cliente = st.number_input(f"Ore totali impiegate nel cantiere dal Cliente:", min_value=0.0, value=0.0, step=1.0)
-    costo_orario_cliente = st.number_input(f"Costo orario della manodopera Cliente:", min_value=0.0, value=0.0, step=1.0)
+    ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
+    costo_orario_cliente = st.number_input(f"Costo orario Cliente:", min_value=0.0, value=0.0, step=1.0)
     
     tot_mat_cliente = kg_cliente * prezzo_cliente
     tot_mano_cliente = ore_cliente * costo_orario_cliente
@@ -117,30 +137,27 @@ with col_cliente:
 
 st.markdown("---")
 
-# 5. DUE GRAFICI SEPARATI E AFFIANCATI
+# 5. DUE GRAFICI SEPARATI E AFFIANCATI (TEMA AUTOMATICO)
 st.markdown("#### 3. Analisi Visiva d'Impatto")
 
 col_chart1, col_chart2 = st.columns(2)
 
-# --- GRAFICO 1: CONFRONTO COSTI ---
 with col_chart1:
     fig_costi = go.Figure()
     fig_costi.add_trace(go.Bar(
         x=['Sistema INTEC', 'Metodo Cliente'],
         y=[tot_generale_intec, tot_generale_cliente],
-        marker_color=['#008F99', '#4A4A4A'], 
+        marker_color=['#008F99', '#4A4A4A'],
         text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
         textposition='auto',
         textfont=dict(color='white')
     ))
     fig_costi.update_layout(
         title=dict(text="Confronto Costo Totale", font=dict(size=16)),
-        xaxis=dict(tickfont=dict(size=12)),
         yaxis=dict(title="Spesa Totale", showgrid=True)
     )
     st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit")
 
-# --- GRAFICO 2: CONFRONTO ORE ---
 with col_chart2:
     fig_ore = go.Figure()
     fig_ore.add_trace(go.Bar(
@@ -153,12 +170,11 @@ with col_chart2:
     ))
     fig_ore.update_layout(
         title=dict(text="Confronto Tempistiche", font=dict(size=16)),
-        xaxis=dict(tickfont=dict(size=12)),
         yaxis=dict(title="Ore Totali (h)", showgrid=True)
     )
     st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit")
 
-# 6. BANNER DI CHIUSURA COMMERCIALE (ROI)
+# 6. BANNER DI CHIUSURA ROI
 st.markdown("---")
 risparmio_economico = tot_generale_cliente - tot_generale_intec
 ore_risparmiate = ore_cliente - ore_intec
@@ -170,8 +186,7 @@ with col_res2:
     st.metric(label="COSTO TOTALE METODO CLIENTE", value=f"{tot_generale_cliente:,.2f} {valuta}")
 
 if tot_generale_cliente > 0:
-    st.success(f"💰 **Risparmio Economico Netto per il Cliente:** {risparmio_economico:,.2f} {valuta} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore di lavoro in meno!")
+    st.success(f"💰 **Risparmio Economico Netto:** {risparmio_economico:,.2f} {valuta} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore")
 
-# 7. NOTA TECNICA IN CALCE
 st.markdown("---")
-st.caption("⚠️ **Nota Tecnica di Processo:** La pasta INTEC è fresabile dopo circa **12 ore**. I tempi possono subire variazioni in base alla temperatura dell'ambiente di lavoro e alla percentuale di catalisi utilizzata.")
+st.caption("⚠️ **Nota Tecnica:** I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.")
