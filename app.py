@@ -178,4 +178,4 @@ if tot_generale_cliente > 0:
     st.success(f"💰 **Risparmio Netto sui Materiali:** {risparmio_economico:,.2f} {valuta} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore lavorative!")
 
 st.markdown("---")
-st.caption("⚠️ **Nota Tecnica:** I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.")
+st.markdown("⚠️ **Nota Tecnica:** *I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.*")
