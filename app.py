@@ -167,6 +167,3 @@ if tot_generale_cliente > 0:
 st.markdown("---")
 st.markdown("⚠️ **Nota Tecnica:** *I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.*")
 
-# Pulsante di STAMPA (Solo visibile a schermo, sparisce nella stampa reale)
-if st.button("🖨️ Stampa Offerta / Salva PDF"):
-    st.markdown("<script>window.print();</script>", unsafe_allow_html=True)
