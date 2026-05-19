@@ -17,18 +17,25 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS SUPER-OTTIMIZZATO PER SPAZI E STAMPA A4
+# CSS ULTRA-COMPATTO PER ABBATTERE I MARGINI E GARANTIRE 1 PAGINA IN STAMPA
 st.markdown(f"""
     <style>
-        /* 1. Uccide lo spazio gigante in alto tipico di Streamlit */
-        div[data-testid="stAppViewBlockContainer"] {{
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
+        /* 1. Elimina completamente l'header nativo invisibile di Streamlit che creava lo spazio in alto */
+        header[data-testid="stHeader"] {{
+            display: none !important;
+            height: 0px !important;
         }}
         
-        /* 2. Centratura Logo */
-        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: -15px; }}
-        .logo-container {{ width: 400px; max-width: 100%; }}
+        /* Azzera il padding del contenitore principale e spinge il logo verso l'alto */
+        div[data-testid="stAppViewBlockContainer"], .block-container {{
+            padding-top: 0rem !important;
+            margin-top: -35px !important; 
+            padding-bottom: 0.5rem !important;
+        }}
+        
+        /* 2. Centratura Logo e Spazi */
+        .logo-outer-container {{ display: flex; justify-content: center; width: 100%; margin-bottom: -20px; }}
+        .logo-container {{ width: 380px; max-width: 100%; }}
         .logo-light {{ display: block; width: 100%; }}
         .logo-dark {{ display: none; width: 100%; }}
         
@@ -37,27 +44,28 @@ st.markdown(f"""
             .logo-dark {{ display: block; }}
         }}
         
-        /* 3. BLINDATURA PER LA STAMPA SU SINGOLA PAGINA */
+        /* 3. BLINDATURA PER LA STAMPA SU SINGOLA PAGINA (A4) */
         @media print {{
-            @page {{ margin: 0.5cm; size: A4 portrait; }} 
+            @page {{ margin: 0.4cm; size: A4 portrait; }} 
             
-            /* Nasconde i controlli e i menu laterali */
+            /* Nasconde i controlli di input e i menu */
             .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header, [data-testid="stSidebar"] {{
                 display: none !important;
             }}
             
-            /* Forza sfondo bianco e testo nero per non sprecare inchiostro */
-            .main, div[data-testid="stAppViewBlockContainer"] {{ 
+            /* Forza lo sfondo bianco assoluto e testo nero */
+            .main, div[data-testid="stAppViewBlockContainer"], .block-container {{ 
                 background-color: white !important; 
                 color: black !important; 
                 padding: 0 !important; 
+                margin: 0 !important;
             }}
             
-            /* Logo di stampa */
+            /* Logo di stampa ottimizzato */
             .logo-dark {{ display: none !important; }}
-            .logo-light {{ display: block !important; width: 220px !important; margin: 0 auto 5px auto !important; }}
+            .logo-light {{ display: block !important; width: 200px !important; margin: 0 auto 5px auto !important; }}
             
-            /* FORZA LE COLONNE A RESTARE AFFIANCATE IN STAMPA (evita che vadano a capo) */
+            /* Forza le colonne a restare affiancate per risparmiare spazio verticale */
             div[data-testid="column"] {{
                 width: 48% !important;
                 flex: 1 1 48% !important;
@@ -66,11 +74,17 @@ st.markdown(f"""
                 vertical-align: top;
             }}
             
-            /* Compressione dei margini testuali */
-            h3, h4 {{ margin-top: 2px !important; margin-bottom: 2px !important; padding: 0 !important; font-size: 14px !important; }}
-            hr {{ margin: 5px 0 !important; }}
+            /* Compatta al massimo i blocchi dei Totali (Metric) */
+            div[data-testid="stMetric"] {{
+                padding: 2px !important;
+                margin: 0 !important;
+            }}
             
-            /* Testo Grafici nero */
+            /* Compressione dei testi e dei titoli */
+            h3, h4, p, ul, li {{ margin-top: 2px !important; margin-bottom: 2px !important; padding: 0 !important; font-size: 13px !important; }}
+            hr {{ margin: 4px 0 !important; }}
+            
+            /* Colore testo grafici nero per la stampa */
             .js-plotly-plot .plotly text {{ fill: #000000 !important; }}
         }}
     </style>
@@ -170,7 +184,7 @@ with col_chart1:
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_costi.update_layout(
-        height=320, # <--- GRAFICO PIÙ BASSO PER ENTRARE IN UN A4
+        height=240, # <--- RIDOTTO ULTERIORMENTE PER COMPATTARE IL TUTTO IN 1 PAGINA
         title=dict(text="Costo Materiali", font=dict(size=14)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
@@ -187,7 +201,7 @@ with col_chart2:
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_ore.update_layout(
-        height=320, # <--- GRAFICO PIÙ BASSO PER ENTRARE IN UN A4
+        height=240, # <--- RIDOTTO ULTERIORMENTE PER COMPATTARE IL TUTTO IN 1 PAGINA
         title=dict(text="Ore di Lavoro", font=dict(size=14)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
