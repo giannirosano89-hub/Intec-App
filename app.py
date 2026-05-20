@@ -17,6 +17,14 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
+# Istruzione invisibile per dire allo smartphone quale icona usare sulla Home
+if logo_negative:
+    st.markdown(f"""
+        <head>
+            <link rel="apple-touch-icon" href="data:image/png;base64,{logo_negative}">
+        </head>
+    """, unsafe_allow_html=True)
+
 # CSS AGGIORNATO: MENU VISIBILE SU SCHERMO E STAMPA COMPATTA
 st.markdown(f"""
     <style>
@@ -135,7 +143,7 @@ with col_intec:
     
     # Formattazione condizionale PF07E in base al mercato
     if is_us_market:
-        galloni_per_fusto = 55.0  # Dato esatto: peso specifico 0.7 = 200L = 55 galloni
+        galloni_per_fusto = 55.0  
         tot_galloni = fusti_pf07e * galloni_per_fusto
         spessore_inch = 16 / 25.4
         testo_pf07e = f"{tot_galloni:.1f} gallons ({fusti_pf07e:.1f} drums) — *thickness {spessore_inch:.2f} inch*"
