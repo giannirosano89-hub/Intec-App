@@ -5,7 +5,6 @@ import base64
 import datetime
 
 # 1. IMPOSTAZIONE GRAFICA E LOGO
-# 1. IMPOSTAZIONE GRAFICA E LOGO
 st.set_page_config(
     page_title="Intec - ROI", 
     page_icon="INTEC-logo-V1-2colori-NEGATIVE.png", 
