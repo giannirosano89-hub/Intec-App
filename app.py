@@ -4,9 +4,9 @@ import plotly.graph_objects as go
 import base64
 import datetime
 
-# 1. IMPOSTAZIONE GRAFICA E LOGO
+# 1. IMPOSTAZIONE GRAFICA E LOGO (Configurazione Nativa)
 st.set_page_config(
-    page_title="Intec - ROI", 
+    page_title="Intec App", 
     page_icon="INTEC-logo-V1-2colori-NEGATIVE.png", 
     layout="wide"
 )
