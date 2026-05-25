@@ -151,19 +151,19 @@ with col_intec:
     - 🧪 **Resina R999 ({tipo_rinforzo}):** {display_r999:.2f} {unita_r999} — *laminazione 2 strati*
     """)
     
-    # Inserimento Prezzi Separati (Materiale e Resina)
+    # Inserimento Prezzi Separati INTEC
     col_prezzi1, col_prezzi2 = st.columns(2)
     with col_prezzi1:
         prezzo_intec_label = "Prezzo PF07E ($/lbs):" if is_us_market else "Prezzo PF07E (€/KG):"
         prezzo_intec_input = st.number_input(prezzo_intec_label, min_value=0.0, value=10.70, step=0.1)
     with col_prezzi2:
-        prezzo_resina_label = "Costo Resina ($/lbs):" if is_us_market else "Costo Resina (€/KG):"
+        prezzo_resina_label = "Costo Resina R999 ($/lbs):" if is_us_market else "Costo Resina R999 (€/KG):"
         prezzo_resina_input = st.number_input(prezzo_resina_label, min_value=0.0, value=5.00, step=0.1)
     
     ore_intec = (superficie_m2 / 5.0) + 2.0
     st.success(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
     
-    # Calcolo totale economico separato con conversione integrata se mercato USA
+    # Calcolo totale economico separato INTEC
     if is_us_market:
         costo_pf07e = (kg_pf07e * 2.20462) * prezzo_intec_input
         costo_resina = (kg_r999 * 2.20462) * prezzo_resina_input
@@ -178,14 +178,28 @@ with col_cliente:
     st.subheader("⚪ Metodo Attuale Cliente")
     tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
     
-    label_mat_cliente = "Totale materiale Cliente (lbs):" if is_us_market else "Totale materiale Cliente (KG):"
-    kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
+    # Inserimento Quantità Separate Cliente
+    col_q_cli1, col_q_cli2 = st.columns(2)
+    with col_q_cli1:
+        label_mat_cliente = "Materiale Cliente (lbs):" if is_us_market else "Materiale Cliente (KG):"
+        kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
+    with col_q_cli2:
+        label_res_cliente = "Resina Cliente (lbs):" if is_us_market else "Resina Cliente (KG):"
+        kg_resina_cliente = st.number_input(label_res_cliente, min_value=0.0, value=0.0, step=10.0)
     
-    label_prezzo_cliente = "Prezzo Medio Materiale Cliente ($/lbs):" if is_us_market else "Prezzo Medio Materiale Cliente (€/KG):"
-    prezzo_cliente = st.number_input(label_prezzo_cliente, min_value=0.0, value=0.0, step=0.5)
+    # Inserimento Prezzi Separati Cliente
+    col_p_cli1, col_p_cli2 = st.columns(2)
+    with col_p_cli1:
+        label_prezzo_cliente = "Prezzo Mat. Cliente ($/lbs):" if is_us_market else "Prezzo Mat. Cliente (€/KG):"
+        prezzo_cliente = st.number_input(label_prezzo_cliente, min_value=0.0, value=0.0, step=0.5)
+    with col_p_cli2:
+        label_prezzo_res_cliente = "Costo Resina Cliente ($/lbs):" if is_us_market else "Costo Resina Cliente (€/KG):"
+        prezzo_resina_cliente = st.number_input(label_prezzo_res_cliente, min_value=0.0, value=0.0, step=0.5)
     
     ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
-    tot_generale_cliente = kg_cliente * prezzo_cliente
+    
+    # Calcolo totale economico Cliente (Materiale + Resina)
+    tot_generale_cliente = (kg_cliente * prezzo_cliente) + (kg_resina_cliente * prezzo_resina_cliente)
 
 st.markdown("---")
 
