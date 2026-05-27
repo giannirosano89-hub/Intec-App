@@ -117,9 +117,15 @@ col_r_int, col_r_cli = st.columns(2)
 with col_r_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (R999)</span>", unsafe_allow_html=True)
     
-    # Testo statico al posto del menu a tendina + spaziatore per allineamento
-    st.markdown("<b>🛠️ Tecnologia:</b> R999 Intec &nbsp;|&nbsp; <b>⚖️ Rapporto impregnazione:</b> 1:2,5", unsafe_allow_html=True)
-    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    # Casella di testo simulata per allineamento perfetto con il menu a tendina "Tecnologia Concorrente"
+    st.markdown("""
+        <div style="margin-bottom: 1rem;">
+            <label style="font-size: 14px; display: block; margin-bottom: 0.5rem; color: inherit;">Tecnologia INTEC:</label>
+            <div style="height: 39px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
+                <b>🛠️ R999 Intec</b> &nbsp;|&nbsp; <b>⚖️ Rapporto impregnazione:</b> 1:2,5
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
     
     metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
     
@@ -232,14 +238,14 @@ with col_p_int:
     else:
         testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {200.0 * peso_specifico:.0f} kg) — *spessore 16mm*"
     
-    col_prezzi_p1, col_prezzi_p2 = st.columns(2)
-    with col_prezzi_p1:
-        prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1)
-    with col_prezzi_p2:
+    prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1, key="prz_p_int")
+    
+    col_op1, col_op2 = st.columns(2)
+    with col_op1:
+        ore_paste_base = superficie_m2 / 5.0
+        ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
+    with col_op2:
         costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_int")
-        
-    ore_paste_base = superficie_m2 / 5.0
-    ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
 
     costo_mat_p_intec = (kg_prodotto * 2.20462 if is_us_market else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
@@ -261,7 +267,7 @@ with col_p_cli:
     with col_c_op1:
         ore_p_cliente = st.number_input(f"Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0, key="ore_p_cli")
     with col_c_op2:
-        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_cli")
+        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_cli")
         
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
     tot_fase2_cliente = costo_mat_p_cliente + costo_mano_p_cliente
