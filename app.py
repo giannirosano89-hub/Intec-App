@@ -140,7 +140,6 @@ with col_intec:
     testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
     ore_r999_base = superficie_m2 * (20.0 / 60.0)
     
-    # Specifiche stampate direttamente sotto la fase 1
     st.info(f"**Specifiche Laminazione:**\n- 🧪 **R999 ({tipo_rinforzo}):** {testo_r999}\n- ⏱️ **Manodopera:** {ore_r999_base:.1f} h *(calcolo: 1 m² = 20 min)*")
 
 
@@ -163,7 +162,6 @@ with col_intec:
 
     ore_paste_base = superficie_m2 / 5.0
     
-    # Specifiche stampate direttamente sotto la fase 2
     st.info(f"**Specifiche Paste:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- ⏱️ **Manodopera:** {ore_paste_base:.1f} h *(calcolo: 5 m² = 1 ora)*")
 
 
@@ -176,7 +174,7 @@ with col_intec:
     with col_o2: 
         costo_orario_intec = st.number_input(f"Tariffa INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
         
-    # STAMPA FANTASMA INTEC PREZZI
+    # STAMPA FANTASMA INTEC PREZZI E ORE
     st.markdown(f"""
     <div class='print-text'><b>Dati Economici INTEC (Prezzi e Ore Inserite):</b><br>
     - Resina R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
@@ -191,15 +189,18 @@ with col_intec:
     costo_manodopera_intec = ore_totali_intec * costo_orario_intec
     tot_generale_intec = costo_mat_intec + costo_manodopera_intec
 
+    # RIEPILOGO TOTALE DI COLONNA
+    st.success(f"**RIEPILOGO INTEC**\n- ⏱️ Ore Totali: {ore_totali_intec:.1f} h\n- 💰 Costo Totale: {tot_generale_intec:,.2f} {valuta_simbolo}")
+
 # --- COLONNA CLIENTE ---
 with col_cliente:
     st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #4A4A4A; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Metodo Attuale Cliente</h3>", unsafe_allow_html=True)
     
-    st.markdown("##### 🛠️ 1. Tecnologia e Materiali")
+    st.markdown("##### 🛠️ 1. Dati Economici e Manodopera")
     tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Duratec"])
+    
     costo_mat_cliente = st.number_input(f"Costo Totale Materiale ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0)
     
-    st.markdown("##### ⏱️ 2. Manodopera Cliente")
     col_c_o1, col_c_o2 = st.columns(2)
     with col_c_o1:
         ore_cliente = st.number_input(f"Ore totali previste:", min_value=0.0, value=0.0, step=1.0)
@@ -218,18 +219,13 @@ with col_cliente:
     costo_manodopera_cliente = ore_cliente * costo_orario_cliente
     tot_generale_cliente = costo_mat_cliente + costo_manodopera_cliente
 
+    # RIEPILOGO TOTALE DI COLONNA
+    st.info(f"**RIEPILOGO CLIENTE**\n- ⏱️ Ore Totali: {ore_cliente:.1f} h\n- 💰 Costo Totale: {tot_generale_cliente:,.2f} {valuta_simbolo}")
+
 st.markdown("---")
 
-# 5. RIEPILOGO TOTALI E GRAFICI
-st.markdown("#### 3. Riepilogo Finale (Materiali + Manodopera)")
-
-col_res1, col_res2, col_res3, col_res4 = st.columns(4)
-with col_res1: st.metric(label="⏱️ ORE TOTALI INTEC", value=f"{ore_totali_intec:.1f} h")
-with col_res2: st.metric(label="⏱️ ORE TOTALI CLIENTE", value=f"{ore_cliente:.1f} h")
-with col_res3: st.metric(label=f"💰 COSTO TOTALE INTEC", value=f"{tot_generale_intec:,.2f} {valuta_simbolo}")
-with col_res4: st.metric(label=f"💰 COSTO TOTALE CLIENTE", value=f"{tot_generale_cliente:,.2f} {valuta_simbolo}")
-
-st.markdown("<br>", unsafe_allow_html=True)
+# 5. GRAFICI
+st.markdown("#### 3. Impatto Visivo Risultati")
 
 col_chart1, col_chart2 = st.columns(2)
 with col_chart1:
