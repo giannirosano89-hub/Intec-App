@@ -1,7 +1,7 @@
-import streamlit as st
-import plotly.graph_objects as go
-import base64
-import datetime
+streamlit>=1.35.0
+plotly>=5.20.0
+reportlab>=4.1.0
+matplotlib>=3.8.0
 
 # ─────────────────────────────────────────────
 # COSTANTI CENTRALIZZATE
