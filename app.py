@@ -97,9 +97,12 @@ else:
     superficie_sqft = superficie
     superficie_m2 = superficie / 10.7639
 
-is_us_market = (unita == "Piedi Quadri (sq ft)" and valuta == "Dollaro ($)")
-valuta_simbolo = "$" if is_us_market else "€"
-unita_peso_str = "lbs" if is_us_market else "kg"
+# LOGICA SEPARATA E INDIPENDENTE (Modifica Richiesta)
+is_dollar = (valuta == "Dollaro ($)")
+is_sqft = (unita == "Piedi Quadri (sq ft)")
+
+valuta_simbolo = "$" if is_dollar else "€"
+unita_peso_str = "lbs" if is_sqft else "kg"
 
 st.markdown(f"<div class='print-text'><b>Superficie:</b> {superficie} {unita} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Valuta:</b> {valuta}</div>", unsafe_allow_html=True)
 st.markdown("---")
@@ -117,8 +120,7 @@ col_r_int, col_r_cli = st.columns(2)
 with col_r_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (R999)</span>", unsafe_allow_html=True)
     
-    # Casella di testo simulata per allineamento perfetto
-    st.markdown("""
+    st.markdown(f"""
         <div style="margin-bottom: 1rem;">
             <label style="font-size: 14px; display: block; margin-bottom: 0.5rem; color: inherit;">Tecnologia INTEC:</label>
             <div style="height: 39px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
@@ -127,7 +129,9 @@ with col_r_int:
         </div>
     """, unsafe_allow_html=True)
     
-    metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
+    col_i_app1, col_i_app2 = st.columns(2)
+    with col_i_app1:
+        metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
     
     is_spray_intec = (metodo_app_intec == "Applicazione con taglio e spruzzo")
     
@@ -142,11 +146,17 @@ with col_r_int:
     else: 
         kg_r999 = (superficie_sqft * moltiplicatori_r999[tipo_rinforzo]) / 2.20462  
         
-    display_r999 = kg_r999 * 2.20462 if is_us_market else kg_r999
-    unita_r999 = "lbs" if is_us_market else "kg"
+    display_r999 = kg_r999 * 2.20462 if is_sqft else kg_r999
+    unita_r999 = "lbs" if is_sqft else "kg"
         
-    # Pulizia box: testo resa dritto al punto
-    testo_r999 = f"{display_r999:.2f} {unita_r999} — *laminazione 2 strati*"
+    if kg_r999 < 175.0:
+        latte_r999 = kg_r999 / 25.0
+        testo_log_r999 = f"[{latte_r999:.1f} {'pails (25 kg)' if is_sqft else 'latte (da 25 kg)'}]"
+    else:
+        fusti_r999 = kg_r999 / 225.0
+        testo_log_r999 = f"[{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums from 55 gal]" if is_sqft else f"[{fusti_r999:.1f} fusti (da 225 kg)]"
+
+    testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
     
     if is_spray_intec:
         ore_r999_base = superficie_m2 * (2.0 / 60.0)
@@ -159,11 +169,10 @@ with col_r_int:
     with col_prezzi_r2:
         costo_orario_r_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_r_int")
     
-    costo_mat_r_intec = (kg_r999 * 2.20462 if is_us_market else kg_r999) * prezzo_resina_input
+    costo_mat_r_intec = (kg_r999 * 2.20462 if is_sqft else kg_r999) * prezzo_resina_input
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
     tot_fase1_intec = costo_mat_r_intec + costo_mano_r_intec
     
-    # Box Specifiche INTEC Pulito
     rinforzo_intec_display = "N/D (Spruzzo)" if is_spray_intec else tipo_rinforzo
     st.info(f"""**Specifiche Laminazione:**
 - 🛠️ **Tecnologia:** Intec R999 ({metodo_app_intec})
@@ -178,7 +187,12 @@ with col_r_int:
 with col_r_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Resina)</span>", unsafe_allow_html=True)
     tecnologia_r_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Duratec"], key="tec_r_cli")
-    metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_cli")
+    
+    col_c_app1, col_c_app2 = st.columns(2)
+    with col_c_app1:
+        metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_cli")
+    with col_c_app2:
+        quantita_r_cliente = st.number_input(f"Quantità Utilizzata ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0, key="qta_r_cli")
     
     is_spray_cliente = (metodo_app_cliente == "Applicazione con taglio e spruzzo")
     
@@ -197,14 +211,14 @@ with col_r_cli:
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
     
-    # Box Specifiche CLIENTE Pulito
     rinforzo_cliente_display = "N/D (Spruzzo)" if is_spray_cliente else tipo_rinforzo_cliente
     st.info(f"""**Specifiche Laminazione:**
 - 🛠️ **Tecnologia:** {tecnologia_r_cliente} ({metodo_app_cliente})
 - 🧶 **Rinforzo:** {rinforzo_cliente_display}
+- 🧪 **Resa Materiale:** {quantita_r_cliente:.2f} {unita_peso_str}
 - ⏱️ **Manodopera:** {ore_r_cliente:.1f} h""")
     
-    st.markdown(f"<div class='print-text'><b>Fase 1 Cliente ({tecnologia_r_cliente}):</b><br>- Metodo: {metodo_app_cliente}<br>- Rinforzo: {rinforzo_cliente_display}<br>- Costo Mat.: {costo_mat_r_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_r_cliente:.1f} h (a {costo_orario_r_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='print-text'><b>Fase 1 Cliente ({tecnologia_r_cliente}):</b><br>- Metodo: {metodo_app_cliente}<br>- Rinforzo: {rinforzo_cliente_display}<br>- Quantità: {quantita_r_cliente:.2f} {unita_peso_str}<br>- Costo Mat.: {costo_mat_r_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_r_cliente:.1f} h (a {costo_orario_r_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.info(f"**Subtotale Fase 1 (Cliente):** {tot_fase1_cliente:,.2f} {valuta_simbolo}")
 
 st.markdown("---")
@@ -225,7 +239,7 @@ with col_p_int:
     kg_prodotto = superficie_m2 * (20.0 * peso_specifico)
     fusti_prodotto = kg_prodotto / (200.0 * peso_specifico)
     
-    if is_us_market:
+    if is_sqft:
         testo_prodotto = f"{fusti_prodotto * 55.0:.1f} gallons ({fusti_prodotto:.1f} drums from 55 gal) — *thickness {16/25.4:.2f} inch*"
     else:
         testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {200.0 * peso_specifico:.0f} kg) — *spessore 16mm*"
@@ -239,11 +253,10 @@ with col_p_int:
     ore_paste_base = superficie_m2 / 5.0
     ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
 
-    costo_mat_p_intec = (kg_prodotto * 2.20462 if is_us_market else kg_prodotto) * prezzo_pasta_input
+    costo_mat_p_intec = (kg_prodotto * 2.20462 if is_sqft else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
     tot_fase2_intec = costo_mat_p_intec + costo_mano_p_intec
     
-    # Box Specifiche INTEC Paste
     st.info(f"""**Specifiche Paste:**
 - 📦 **{prodotto_intec}:** {testo_prodotto}
 - ⏱️ **Manodopera:** {ore_paste_intec:.1f} h""")
@@ -267,7 +280,6 @@ with col_p_cli:
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
     tot_fase2_cliente = costo_mat_p_cliente + costo_mano_p_cliente
     
-    # Box Specifiche CLIENTE Paste
     st.info(f"""**Specifiche Applicazione Paste:**
 - 🛠️ **Tecnologia:** {tecnologia_p_cliente}
 - ⏱️ **Manodopera:** {ore_p_cliente:.1f} h""")
@@ -329,4 +341,4 @@ if tot_generale_cliente > 0:
         st.error(f"📉 **Differenza Costi (Mat. + Lavoro):** {risparmio_economico:,.2f} {valuta_simbolo} | ⏱️ **Differenza Ore:** {ore_risparmiate:.1f} ore")
 
 st.markdown("---")
-st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi. I costi esposti sommano materiale e manodopera calcolati per tutte le fasi.</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi. I costi esposti sommano materiale e manodopera calcolati per tutte le fases.</p>", unsafe_allow_html=True)
