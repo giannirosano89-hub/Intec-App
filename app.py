@@ -116,7 +116,11 @@ col_r_int, col_r_cli = st.columns(2)
 # --- FASE 1: INTEC ---
 with col_r_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (R999)</span>", unsafe_allow_html=True)
-    tecnologia_r_intec = st.selectbox("Tecnologia INTEC:", ["R999 Intec"], key="tec_r_int")
+    
+    # Testo statico al posto del menu a tendina + spaziatore per allineamento
+    st.markdown("<b>🛠️ Tecnologia:</b> R999 Intec &nbsp;|&nbsp; <b>⚖️ Rapporto impregnazione:</b> 1:2,5", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    
     metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
     
     is_spray_intec = (metodo_app_intec == "Applicazione con taglio e spruzzo")
@@ -161,15 +165,14 @@ with col_r_int:
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
     tot_fase1_intec = costo_mat_r_intec + costo_mano_r_intec
     
-    # Box Specifiche INTEC Rimodellato (Aggiunto rapporto impregnazione)
+    # Box Specifiche INTEC
     rinforzo_intec_display = "N/D (Spruzzo)" if is_spray_intec else tipo_rinforzo
     st.info(f"""**Specifiche Laminazione:**
-- 🛠️ **Tecnologia:** R999 Intec ({metodo_app_intec})
+- 🛠️ **Metodo:** {metodo_app_intec}
 - 🧪 **R999 ({rinforzo_intec_display}):** {testo_r999}
-- ⚖️ **Rapporto impregnazione:** 1:2,5
 - ⏱️ **Manodopera:** {ore_r999_intec:.1f} h *(calcolo: {testo_calc_ore})*""")
     
-    st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- Metodo: {metodo_app_intec}<br>- Rinforzo: {rinforzo_intec_display}<br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Rapporto Imp.: 1:2,5<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- Tecnologia: R999 Intec (Rapporto 1:2,5)<br>- Metodo: {metodo_app_intec}<br>- Rinforzo: {rinforzo_intec_display}<br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.success(f"**Subtotale Fase 1 (INTEC):** {tot_fase1_intec:,.2f} {valuta_simbolo}")
 
 # --- FASE 1: CLIENTE ---
@@ -195,7 +198,7 @@ with col_r_cli:
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
     
-    # Box Specifiche CLIENTE Rimodellato (Speculare a INTEC)
+    # Box Specifiche CLIENTE
     rinforzo_cliente_display = "N/D (Spruzzo)" if is_spray_cliente else tipo_rinforzo_cliente
     st.info(f"""**Specifiche Laminazione:**
 - 🛠️ **Tecnologia:** {tecnologia_r_cliente} ({metodo_app_cliente})
