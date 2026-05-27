@@ -112,8 +112,8 @@ with col_intec:
     with col_sel1: prodotto_intec = st.selectbox("Prodotto:", ["PF07E", "PF07LS", "PF10E", "PF10GT", "PV10E"])
     with col_sel2: tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", list(moltiplicatori_r999.keys()))
     
-    # SLIDER SPESSORE PASTA
-    spessore_mm = st.slider("Spessore nominale Pasta (mm):", min_value=12, max_value=25, value=16, step=1)
+    # SLIDER SPESSORE PASTA (Aggiornato max 16)
+    spessore_mm = st.slider("Spessore nominale Pasta (mm):", min_value=12, max_value=16, value=16, step=1)
     
     if "MAT" in tipo_rinforzo:
         kg_r999 = superficie_m2 * moltiplicatori_r999[tipo_rinforzo]
@@ -152,10 +152,12 @@ with col_intec:
     kg_prodotto = litri_totali * peso_specifico
     peso_fusto = 200.0 * peso_specifico # Serve per l'etichetta
     
+    # Formattazione aggiornata: mostra i kg/lbs prima dei fusti
     if is_us_market:
-        testo_prodotto = f"{fusti_prodotto * 55.0:.1f} gallons ({fusti_prodotto:.1f} drums from 55 gal) — *thickness {spessore_mm/25.4:.2f} inch*"
+        lbs_prodotto = kg_prodotto * 2.20462
+        testo_prodotto = f"{lbs_prodotto:.1f} lbs [{fusti_prodotto * 55.0:.1f} gallons / {fusti_prodotto:.1f} drums] — *thickness {spessore_mm/25.4:.2f} inch*"
     else:
-        testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {peso_fusto:.0f} kg) — *spessore nominale {spessore_mm}mm*"
+        testo_prodotto = f"{kg_prodotto:.1f} kg [{fusti_prodotto:.1f} fusti (da {peso_fusto:.0f} kg)] — *spessore nominale {spessore_mm}mm*"
 
     st.markdown(f"**Specifiche Tecniche:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- 🧪 **Resina R999 ({tipo_rinforzo}):** {testo_r999}")
     
