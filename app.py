@@ -113,7 +113,7 @@ with col_intec:
     with col_sel2: tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", list(moltiplicatori_r999.keys()))
     
     # SLIDER SPESSORE PASTA (Aggiornato max 16)
-    spessore_mm = st.slider("Spessore nominale Pasta (mm):", min_value=12, max_value=16, value=16, step=1)
+    spessore_mm = st.slider("Spessore nominale Pasta (mm):", min_value=12, max_value=18, value=16, step=1)
     
     if "MAT" in tipo_rinforzo:
         kg_r999 = superficie_m2 * moltiplicatori_r999[tipo_rinforzo]
