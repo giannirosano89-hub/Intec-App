@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import base64
 import datetime
-from pdf_export import genera_pdf
+
 
 # ─────────────────────────────────────────────
 # COSTANTI CENTRALIZZATE
