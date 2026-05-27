@@ -16,7 +16,7 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS AGGIORNATO: GESTIONE STAMPA
+# CSS AGGIORNATO: GESTIONE STAMPA E BOX INFORMATIVI
 st.markdown(f"""
     <style>
         .block-container {{ padding-top: 2.5rem !important; padding-bottom: 0.5rem !important; }}
@@ -47,11 +47,14 @@ st.markdown(f"""
             
             div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; display: inline-block !important; vertical-align: top; }}
             div[data-testid="stMetric"] {{ padding: 0 !important; margin: 0 !important; }}
-            div[data-testid="stAlert"] {{ background-color: white !important; border: 2px solid #008F99 !important; padding: 10px !important; color: black !important; margin-bottom: 5px !important; }}
+            
+            /* STILE BOX INFORMATIVI PER STAMPA */
+            div[data-testid="stAlert"] {{ background-color: white !important; border: 2px solid #008F99 !important; padding: 10px !important; color: black !important; margin-bottom: 10px !important; }}
             div[data-testid="stAlert"] * {{ color: black !important; }}
+            
             h3 {{ font-size: 16px !important; margin-top: 5px !important; margin-bottom: 5px !important; }}
             h4 {{ font-size: 14px !important; margin-top: 8px !important; margin-bottom: 5px !important; }}
-            h5 {{ font-size: 13px !important; margin-top: 4px !important; margin-bottom: 2px !important; font-weight: bold; }}
+            h5 {{ font-size: 13px !important; margin-top: 8px !important; margin-bottom: 4px !important; font-weight: bold; color: #008F99 !important; }}
             p, ul, li {{ font-size: 12px !important; margin-top: 3px !important; margin-bottom: 3px !important; }}
             hr {{ margin: 8px 0 !important; border-top: 1px solid #ccc !important; }}
         }}
@@ -135,6 +138,11 @@ with col_intec:
         testo_log_r999 = f"[{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums from 55 gal]" if is_us_market else f"[{fusti_r999:.1f} fusti (da 225 kg)]"
 
     testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
+    ore_r999_base = superficie_m2 * (20.0 / 60.0)
+    
+    # Specifiche stampate direttamente sotto la fase 1
+    st.info(f"**Specifiche Laminazione:**\n- 🧪 **R999 ({tipo_rinforzo}):** {testo_r999}\n- ⏱️ **Manodopera:** {ore_r999_base:.1f} h *(calcolo: 1 m² = 20 min)*")
+
 
     # ---------------- FASE 2: PASTE ----------------
     st.markdown("##### 📦 2. Applicazione Paste")
@@ -153,30 +161,31 @@ with col_intec:
     else:
         testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {200.0 * peso_specifico:.0f} kg) — *spessore 16mm*"
 
-    # ---------------- FASE 3: MANODOPERA ----------------
-    st.markdown("##### ⏱️ 3. Manodopera INTEC")
-    col_o1, col_o2, col_o3 = st.columns(3)
-    ore_r999_base = superficie_m2 * (20.0 / 60.0)
     ore_paste_base = superficie_m2 / 5.0
     
-    with col_o1: ore_r999 = st.number_input("Ore R999 (20 min/m²):", min_value=0.0, value=float(ore_r999_base), step=0.5)
-    with col_o2: ore_paste = st.number_input("Ore Paste (1h/5m²):", min_value=0.0, value=float(ore_paste_base), step=0.5)
-    with col_o3: costo_orario_intec = st.number_input(f"Tariffa ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+    # Specifiche stampate direttamente sotto la fase 2
+    st.info(f"**Specifiche Paste:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- ⏱️ **Manodopera:** {ore_paste_base:.1f} h *(calcolo: 5 m² = 1 ora)*")
+
+
+    # ---------------- FASE 3: TOTALI MANODOPERA ----------------
+    st.markdown("##### ⏱️ 3. Riepilogo Manodopera INTEC")
+    col_o1, col_o2 = st.columns(2)
     
-    ore_totali_intec = ore_r999 + ore_paste
-
-    st.info(f"**Specifiche Tecniche:**\n\n- 🧪 **R999 ({tipo_rinforzo}):** {testo_r999}\n- 📦 **{prodotto_intec}:** {testo_prodotto}")
-
-    # STAMPA FANTASMA INTEC
+    with col_o1: 
+        ore_totali_intec = st.number_input("Ore totali (R999 + Paste):", min_value=0.0, value=float(ore_r999_base + ore_paste_base), step=0.5)
+    with col_o2: 
+        costo_orario_intec = st.number_input(f"Tariffa INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        
+    # STAMPA FANTASMA INTEC PREZZI
     st.markdown(f"""
-    <div class='print-text'><b>Dati Inseriti INTEC:</b><br>
-    - 🧪 R999 ({tipo_rinforzo}): {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
-    - 📦 {prodotto_intec}: {prezzo_intec_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
-    - ⏱️ Manodopera Totale: {ore_totali_intec:.1f} h (a {costo_orario_intec:.2f} {valuta_simbolo}/h)
+    <div class='print-text'><b>Dati Economici INTEC (Prezzi e Ore Inserite):</b><br>
+    - Resina R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
+    - Pasta {prodotto_intec}: {prezzo_intec_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
+    - Manodopera Totale: {ore_totali_intec:.1f} h (a {costo_orario_intec:.2f} {valuta_simbolo}/h)
     </div>
     """, unsafe_allow_html=True)
     
-    # Calcolo Totali INTEC
+    # Calcolo Costi finali INTEC
     costo_mat_intec = (kg_r999 * 2.20462 if is_us_market else kg_r999) * prezzo_resina_input + \
                       (kg_prodotto * 2.20462 if is_us_market else kg_prodotto) * prezzo_intec_input
     costo_manodopera_intec = ore_totali_intec * costo_orario_intec
@@ -201,7 +210,7 @@ with col_cliente:
     st.markdown(f"""
     <div class='print-text'><b>Dati Inseriti Cliente ({tecnologia}):</b><br>
     - Costo Totale Materiale: {costo_mat_cliente:.2f} {valuta_simbolo}<br>
-    - ⏱️ Manodopera Totale: {ore_cliente:.1f} h (a {costo_orario_cliente:.2f} {valuta_simbolo}/h)
+    - Manodopera Totale: {ore_cliente:.1f} h (a {costo_orario_cliente:.2f} {valuta_simbolo}/h)
     </div>
     """, unsafe_allow_html=True)
     
