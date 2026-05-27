@@ -87,7 +87,7 @@ st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Effic
 
 col_hdr1, col_hdr2, col_hdr3 = st.columns(3)
 with col_hdr1:
-    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Giovanni Rosano")
+    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Mario Rossi")
 with col_hdr2:
     nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
 with col_hdr3:
