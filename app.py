@@ -130,13 +130,13 @@ with col_r_int:
     
     col_i_app1, col_i_app2 = st.columns(2)
     with col_i_app1:
-        metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
+        metodo_app_intec = st.selectbox("Metodo di Applicazione INTEC:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
     
     is_spray_intec = (metodo_app_intec == "Applicazione con taglio e spruzzo")
     
     col_r1, col_r2 = st.columns(2)
     with col_r1:
-        tipo_rinforzo = st.selectbox("Tipo di Rinforzo INTEC:", list(moltiplicatori_r999.keys()), disabled=is_spray_intec, key="rinf_r_int")
+        tipo_rinforzo = st.selectbox("Tipo di Rinforzo INTEC:", list(moltiplicatori_r999.keys()), disabled=is_spray_intec)
     with col_r2:
         prezzo_resina_input = st.number_input(f"Prezzo R999 ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=5.00, step=0.1)
     
@@ -150,16 +150,17 @@ with col_r_int:
         
     testo_r999 = f"{display_r999:.2f} {unita_r999} — *laminazione 2 strati*"
     
+    # Ricalcolo arrotondato a due decimali
     if is_spray_intec:
-        ore_r999_base = superficie_m2 * (2.0 / 60.0)
+        ore_r999_base = round(superficie_m2 * (2.0 / 60.0), 2)
     else:
-        ore_r999_base = superficie_m2 * (20.0 / 60.0)
+        ore_r999_base = round(superficie_m2 * (20.0 / 60.0), 2)
         
     col_prezzi_r1, col_prezzi_r2 = st.columns(2)
     with col_prezzi_r1:
-        ore_r999_intec = st.number_input("Ore manodopera INTEC:", min_value=0.0, value=float(ore_r999_base), step=0.5, key="ore_r_int")
+        ore_r999_intec = st.number_input("Ore manodopera INTEC:", min_value=0.0, value=float(ore_r999_base), step=0.5)
     with col_prezzi_r2:
-        costo_orario_r_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_r_int")
+        costo_orario_r_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
     
     costo_mat_r_intec = (kg_r999 * 2.20462 if is_sqft else kg_r999) * prezzo_resina_input
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
@@ -178,30 +179,28 @@ with col_r_int:
 # --- FASE 1: CLIENTE ---
 with col_r_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Resina)</span>", unsafe_allow_html=True)
-    tecnologia_r_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Duratec"], key="tec_r_cli")
+    tecnologia_r_cliente = st.selectbox("Tecnologia Concorrente Resina:", ["Epossidica", "Duratec"])
     
     col_c_app1, col_c_app2 = st.columns(2)
     with col_c_app1:
-        metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_cli")
+        metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
     with col_c_app2:
-        quantita_r_cliente = st.number_input(f"Quantità Utilizzata ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0, key="qta_r_cli")
+        quantita_r_cliente = st.number_input(f"Quantità Utilizzata Resina ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0)
     
     is_spray_cliente = (metodo_app_cliente == "Applicazione con taglio e spruzzo")
     
     col_rc1, col_rc2 = st.columns(2)
     with col_rc1:
-        tipo_rinforzo_cliente = st.selectbox("Tipo di Rinforzo Cliente:", list(moltiplicatori_r999.keys()), disabled=is_spray_cliente, key="rinf_r_cli")
+        tipo_rinforzo_cliente = st.selectbox("Tipo di Rinforzo Cliente:", list(moltiplicatori_r999.keys()), disabled=is_spray_cliente)
     with col_rc2:
-        # Aggiornato in Prezzo Unitario per calcolare correttamente il costo moltiplicando per la quantità
-        prezzo_r_cliente = st.number_input(f"Prezzo Resina Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.1, key="prz_r_cli")
+        prezzo_r_cliente = st.number_input(f"Prezzo Resina Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.1)
     
     col_c_or1, col_c_or2 = st.columns(2)
     with col_c_or1:
-        ore_r_cliente = st.number_input(f"Ore necessarie Resina:", min_value=0.0, value=0.0, step=1.0, key="ore_r_cli")
+        ore_r_cliente = st.number_input(f"Ore necessarie Resina:", min_value=0.0, value=0.0, step=1.0)
     with col_c_or2:
-        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_r_cli")
+        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente Resina ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
     
-    # Calcolo Costi corretto con Quantità * Prezzo
     costo_mat_r_cliente = quantita_r_cliente * prezzo_r_cliente
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
@@ -241,12 +240,13 @@ with col_p_int:
     
     col_prezzi_p1, col_prezzi_p2 = st.columns(2)
     with col_prezzi_p1:
-        prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1, key="prz_p_int")
+        prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1)
     with col_prezzi_p2:
-        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_int")
+        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
         
-    ore_paste_base = superficie_m2 / 5.0
-    ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
+    # Ricalcolo arrotondato a due decimali
+    ore_paste_base = round(superficie_m2 / 5.0, 2)
+    ore_paste_intec = st.number_input("Ore manodopera Paste INTEC:", min_value=0.0, value=float(ore_paste_base), step=0.5)
 
     costo_mat_p_intec = (kg_prodotto * 2.20462 if is_sqft else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
@@ -262,15 +262,15 @@ with col_p_int:
 # --- FASE 2: CLIENTE ---
 with col_p_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Paste)</span>", unsafe_allow_html=True)
-    tecnologia_p_cliente = st.selectbox("Tecnologia Concorrente Paste:", ["Epossidica", "Spraycore"], key="tec_p_cli")
+    tecnologia_p_cliente = st.selectbox("Tecnologia Concorrente Paste:", ["Epossidica", "Spraycore"])
     
-    costo_mat_p_cliente = st.number_input(f"Costo Totale Materiale Paste ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0, key="mat_p_cli")
+    costo_mat_p_cliente = st.number_input(f"Costo Totale Materiale Paste ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0)
     
     col_c_op1, col_c_op2 = st.columns(2)
     with col_c_op1:
-        ore_p_cliente = st.number_input(f"Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0, key="ore_p_cli")
+        ore_p_cliente = st.number_input(f"Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0)
     with col_c_op2:
-        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_cli")
+        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
         
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
     tot_fase2_cliente = costo_mat_p_cliente + costo_mano_p_cliente
