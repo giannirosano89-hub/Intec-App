@@ -97,9 +97,9 @@ st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Effic
 
 col_hdr1, col_hdr2, col_hdr3 = st.columns(3)
 with col_hdr1:
-    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Giovanni Rosano")
+    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Mario Rossi")
 with col_hdr2:
-    nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
+    nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale ")
 with col_hdr3:
     data_offerta = st.date_input("📅 Data Offerta:", value=datetime.date.today(), format="DD/MM/YYYY")
 
@@ -139,7 +139,7 @@ st.markdown(f"<div class='print-text'><b>Superficie:</b> {superficie} {unita} &n
 st.markdown("---")
 
 # 5. ANALISI COMPARATIVA
-st.markdown("#### 2. Analisi Comparativa Materiali e Tempi")
+st.markdown("#### 2. Analisi Comparativa Applicazione e Tempi")
 col_intec, col_cliente = st.columns(2)
 
 # Variabili per il controllo del Mercato USA e testi
@@ -262,15 +262,15 @@ with col_cliente:
     # Pallino Grigio
     st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #4A4A4A; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Metodo Attuale Cliente</h3>", unsafe_allow_html=True)
     
-    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
+    tecnologia = st.selectbox("Tecnologia Corrente:", ["Epossidica", "Spray"])
     
     # Inserimento Quantità Separate Cliente
     col_q_cli1, col_q_cli2 = st.columns(2)
     with col_q_cli1:
-        label_mat_cliente = "Materiale Cliente (lbs):" if is_us_market else "Materiale Cliente (KG):"
+        label_mat_cliente = "Quantità Materiale Cliente (lbs):" if is_us_market else "Quantità Materiale Cliente (KG):"
         kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
     with col_q_cli2:
-        label_res_cliente = "Resina Cliente (lbs):" if is_us_market else "Resina Cliente (KG):"
+        label_res_cliente = "Quantità Resina Cliente (lbs):" if is_us_market else "Quantità Resina Cliente (KG):"
         kg_resina_cliente = st.number_input(label_res_cliente, min_value=0.0, value=0.0, step=10.0)
     
     # Inserimento Prezzi Separati Cliente
