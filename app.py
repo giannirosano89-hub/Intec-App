@@ -75,10 +75,6 @@ st.markdown(f"""
             }}
             div[data-testid="stAlert"] * {{ color: black !important; }}
             
-            /* FORZATURA GRAFICI: IMPEDISCE IL TAGLIO A DESTRA DELLA COLONNA CLIENTE */
-            .stPlotlyChart {{ width: 100% !important; max-width: 100% !important; overflow: hidden !important; }}
-            svg.main-svg {{ width: 100% !important; max-width: 100% !important; }}
-            
             /* TESTI PIU' GRANDI E LEGGIBILI */
             h3 {{ font-size: 16px !important; margin-top: 5px !important; margin-bottom: 5px !important; }}
             h4 {{ font-size: 14px !important; margin-top: 8px !important; margin-bottom: 5px !important; }}
@@ -303,7 +299,7 @@ with col_cliente:
 
 st.markdown("---")
 
-# 6. GRAFICI
+# 6. GRAFICI CON LARGHEZZA FISSA
 st.markdown("#### 3. Impatto Visivo Risultati")
 col_chart1, col_chart2 = st.columns(2)
 
@@ -316,14 +312,15 @@ with col_chart1:
         textposition='auto', textfont=dict(color='white'), width=0.35
     ))
     fig_costi.update_layout(
+        width=330,  # Larghezza fissa per impedire tagli
         height=220, 
         title=dict(text="Costo Materiali", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        # Aumentato il margine destro per evitare tagli in stampa
-        margin=dict(l=10, r=40, t=30, b=20) 
+        margin=dict(l=10, r=10, t=30, b=20) 
     )
-    st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
+    # Rimosso use_container_width per far rispettare i 330px
+    st.plotly_chart(fig_costi, use_container_width=False, theme="streamlit", config={'staticPlot': True})
 
 with col_chart2:
     fig_ore = go.Figure()
@@ -334,14 +331,15 @@ with col_chart2:
         textposition='auto', textfont=dict(color='white'), width=0.35
     ))
     fig_ore.update_layout(
+        width=330,  # Larghezza fissa per impedire tagli
         height=220, 
         title=dict(text="Ore di Lavoro", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        # Aumentato il margine destro per evitare tagli in stampa
-        margin=dict(l=10, r=40, t=30, b=20)
+        margin=dict(l=10, r=10, t=30, b=20)
     )
-    st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
+    # Rimosso use_container_width per far rispettare i 330px
+    st.plotly_chart(fig_ore, use_container_width=False, theme="streamlit", config={'staticPlot': True})
 
 # 7. BANNER FINALE E STAMPA
 st.markdown("---")
