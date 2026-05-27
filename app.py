@@ -104,7 +104,12 @@ is_us_market = (unita == "Piedi Quadri (sq ft)" and valuta == "Dollaro ($)")
 # --- COLONNA INTEC ---
 with col_intec:
     st.subheader("🟢 Sistema INTEC")
-    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
+    
+    col_sel1, col_sel2 = st.columns(2)
+    with col_sel1:
+        prodotto_intec = st.selectbox("Prodotto:", ["PF07E", "PF07LS", "PF10E", "PF10GT", "PV10E"])
+    with col_sel2:
+        tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", ["MAT 300", "MAT 450", "OZ 1.0", "OZ 1.5"])
     
     # Conversione Superfici
     if unita == "Metri Quadri (m²)":
@@ -132,29 +137,49 @@ with col_intec:
         display_r999 = lbs_r999
         unita_r999 = "lbs"
         
-    # Calcolo base PF07E in kg
-    kg_pf07e = superficie_m2 * 14.0
-    fusti_pf07e = kg_pf07e / 140.0 
+    # --- MOTORE MATEMATICO CONTENITORI R999 (Soglia 175 kg) ---
+    if kg_r999 < 175.0:
+        latte_r999 = kg_r999 / 25.0
+        if is_us_market:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} pails (25 kg)] — *laminazione 2 strati*"
+        else:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} latte (da 25 kg)] — *laminazione 2 strati*"
+    else:
+        fusti_r999 = kg_r999 / 225.0
+        if is_us_market:
+            galloni_r999 = fusti_r999 * 55.0
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{galloni_r999:.1f} gallons / {fusti_r999:.1f} drums from 55 gal] — *laminazione 2 strati*"
+        else:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999:.1f} fusti (da 200 lt — 225 kg)] — *laminazione 2 strati*"
+
+    # --- MOTORE MATEMATICO PRODOTTI BASE (Volume fisso 200 lt, peso variabile) ---
+    peso_specifico = 0.7 if "07" in prodotto_intec else 1.0
+    consumo_m2 = 20.0 * peso_specifico
+    peso_fusto = 200.0 * peso_specifico
     
-    # Formattazione condizionale PF07E in base al mercato
+    # Calcolo materiale base
+    kg_prodotto = superficie_m2 * consumo_m2
+    fusti_prodotto = kg_prodotto / peso_fusto 
+    
+    # Formattazione condizionale con specifica del volume costante (200lt / 55gal)
     if is_us_market:
         galloni_per_fusto = 55.0  
-        tot_galloni = fusti_pf07e * galloni_per_fusto
+        tot_galloni = fusti_prodotto * galloni_per_fusto
         spessore_inch = 16 / 25.4
-        testo_pf07e = f"{tot_galloni:.1f} gallons ({fusti_pf07e:.1f} drums) — *thickness {spessore_inch:.2f} inch*"
+        testo_prodotto = f"{tot_galloni:.1f} gallons ({fusti_prodotto:.1f} drums from 55 gal) — *thickness {spessore_inch:.2f} inch*"
     else:
-        testo_pf07e = f"{fusti_pf07e:.1f} fusti (da 140 kg) — *spessore 16mm*"
+        testo_prodotto = f"{fusti_prodotto:.1f} fusti (da 200 lt — {peso_fusto:.0f} kg) — *spessore 16mm*"
 
     st.markdown(f"""
     **Specifiche Tecniche:**
-    - 📦 **PF07E:** {testo_pf07e}
-    - 🧪 **Resina R999 ({tipo_rinforzo}):** {display_r999:.2f} {unita_r999} — *laminazione 2 strati*
+    - 📦 **{prodotto_intec}:** {testo_prodotto}
+    - 🧪 **Resina R999 ({tipo_rinforzo}):** {testo_r999}
     """)
     
     # Inserimento Prezzi Separati INTEC
     col_prezzi1, col_prezzi2 = st.columns(2)
     with col_prezzi1:
-        prezzo_intec_label = "Prezzo PF07E ($/lbs):" if is_us_market else "Prezzo PF07E (€/KG):"
+        prezzo_intec_label = f"Prezzo {prodotto_intec} ($/lbs):" if is_us_market else f"Prezzo {prodotto_intec} (€/KG):"
         prezzo_intec_input = st.number_input(prezzo_intec_label, min_value=0.0, value=10.70, step=0.1)
     with col_prezzi2:
         prezzo_resina_label = "Costo Resina R999 ($/lbs):" if is_us_market else "Costo Resina R999 (€/KG):"
@@ -165,13 +190,13 @@ with col_intec:
     
     # Calcolo totale economico separato INTEC
     if is_us_market:
-        costo_pf07e = (kg_pf07e * 2.20462) * prezzo_intec_input
+        costo_prodotto = (kg_prodotto * 2.20462) * prezzo_intec_input
         costo_resina = (kg_r999 * 2.20462) * prezzo_resina_input
     else:
-        costo_pf07e = kg_pf07e * prezzo_intec_input
+        costo_prodotto = kg_prodotto * prezzo_intec_input
         costo_resina = kg_r999 * prezzo_resina_input
 
-    tot_generale_intec = costo_pf07e + costo_resina
+    tot_generale_intec = costo_prodotto + costo_resina
 
 # --- COLONNA CLIENTE ---
 with col_cliente:
