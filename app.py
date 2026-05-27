@@ -93,7 +93,7 @@ with col_hdr2:
 
 # Testo fantasma intestazione (visibile solo in PDF)
 cliente_display = nome_cliente if nome_cliente else "Non specificato"
-st.markdown(f"<div class='print-text' style='text-align: center; font-size: 12px;'><b>👤 Cliente/Cantiere:</b> {{cliente_display}} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {{data_offerta.strftime('%d/%m/%Y')}}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='print-text' style='text-align: center; font-size: 12px;'><b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -106,7 +106,7 @@ def load_data():
 try:
     df_db = load_data()
 except Exception as e:
-    st.error(f"Errore caricamento database: {{e}}")
+    st.error(f"Errore caricamento database: {e}")
     st.stop()
 
 # 4. CONFIGURAZIONE CANTIERE
@@ -121,7 +121,7 @@ with col_gen3:
     valuta = st.selectbox("Valuta:", ["Euro (€)", "Dollaro ($)"])
 
 # Testo fantasma Configurazione
-st.markdown(f"<div class='print-text'><b>Superficie:</b> {{superficie}} {{unita}} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Valuta:</b> {{valuta}}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='print-text'><b>Superficie:</b> {superficie} {unita} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Valuta:</b> {valuta}</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -178,16 +178,16 @@ with col_intec:
     if kg_r999 < 175.0:
         latte_r999 = kg_r999 / 25.0
         if is_us_market:
-            testo_r999 = f"{{display_r999:.2f}} {{unita_r999}} [{{latte_r999:.1f}} pails (25 kg)] — *laminazione 2 strati*"
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} pails (25 kg)] — *laminazione 2 strati*"
         else:
-            testo_r999 = f"{{display_r999:.2f}} {{unita_r999}} [{{latte_r999:.1f}} latte (da 25 kg)] — *laminazione 2 strati*"
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} latte (da 25 kg)] — *laminazione 2 strati*"
     else:
         fusti_r999 = kg_r999 / 225.0
         if is_us_market:
             galloni_r999 = fusti_r999 * 55.0
-            testo_r999 = f"{{display_r999:.2f}} {{unita_r999}} [{{galloni_r999:.1f}} gallons / {{fusti_r999:.1f}} drums from 55 gal] — *laminazione 2 strati*"
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{galloni_r999:.1f} gallons / {fusti_r999:.1f} drums from 55 gal] — *laminazione 2 strati*"
         else:
-            testo_r999 = f"{{display_r999:.2f}} {{unita_r999}} [{{fusti_r999:.1f}} fusti (da 225 kg)] — *laminazione 2 strati*"
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999:.1f} fusti (da 225 kg)] — *laminazione 2 strati*"
 
     # --- MOTORE MATEMATICO PRODOTTI BASE (Volume fisso, peso variabile) ---
     peso_specifico = 0.7 if "07" in prodotto_intec else 1.0
@@ -203,20 +203,20 @@ with col_intec:
         galloni_per_fusto = 55.0  
         tot_galloni = fusti_prodotto * galloni_per_fusto
         spessore_inch = 16 / 25.4
-        testo_prodotto = f"{{tot_galloni:.1f}} gallons ({{fusti_prodotto:.1f}} drums from 55 gal) — *thickness {{spessore_inch:.2f}} inch*"
+        testo_prodotto = f"{tot_galloni:.1f} gallons ({fusti_prodotto:.1f} drums from 55 gal) — *thickness {spessore_inch:.2f} inch*"
     else:
-        testo_prodotto = f"{{fusti_prodotto:.1f}} fusti (da {{peso_fusto:.0f}} kg) — *spessore 16mm*"
+        testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {peso_fusto:.0f} kg) — *spessore 16mm*"
 
     st.markdown(f"""
     **Specifiche Tecniche:**
-    - 📦 **{{prodotto_intec}}:** {{testo_prodotto}}
-    - 🧪 **Resina R999 ({{tipo_rinforzo}}):** {{testo_r999}}
+    - 📦 **{prodotto_intec}:** {testo_prodotto}
+    - 🧪 **Resina R999 ({tipo_rinforzo}):** {testo_r999}
     """)
     
     # Inserimento Prezzi Separati INTEC
     col_prezzi1, col_prezzi2 = st.columns(2)
     with col_prezzi1:
-        prezzo_intec_label = f"Prezzo {{prodotto_intec}} ($/lbs):" if is_us_market else f"Prezzo {{prodotto_intec}} (€/KG):"
+        prezzo_intec_label = f"Prezzo {prodotto_intec} ($/lbs):" if is_us_market else f"Prezzo {prodotto_intec} (€/KG):"
         prezzo_intec_input = st.number_input(prezzo_intec_label, min_value=0.0, value=10.70, step=0.1)
     with col_prezzi2:
         prezzo_resina_label = "Costo Resina R999 ($/lbs):" if is_us_market else "Costo Resina R999 (€/KG):"
@@ -226,13 +226,13 @@ with col_intec:
     st.markdown(f"""
     <div class='print-text'>
         <b>Prezzi applicati dal venditore:</b><br>
-        - {{prodotto_intec}}: {{prezzo_intec_input:.2f}} {{valuta_simbolo}}/{{unita_peso_str}}<br>
-        - Resina R999: {{prezzo_resina_input:.2f}} {{valuta_simbolo}}/{{unita_peso_str}}
+        - {prodotto_intec}: {prezzo_intec_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>
+        - Resina R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}
     </div>
     """, unsafe_allow_html=True)
     
     ore_intec = (superficie_m2 / 5.0) + 2.0
-    st.success(f"⏱️ Ore Manodopera Stimate: {{ore_intec:.1f}} h")
+    st.success(f"⏱️ Ore Manodopera Stimate: {ore_intec:.1f} h")
     
     # Calcolo totale economico separato INTEC
     if is_us_market:
@@ -272,10 +272,10 @@ with col_cliente:
     # Testo fantasma dati CLIENTE
     st.markdown(f"""
     <div class='print-text'>
-        <b>Tecnologia Cliente:</b> {{tecnologia}}<br>
-        - Materiale Base: {{kg_cliente:.1f}} {{unita_peso_str}} <i>(a {{prezzo_cliente:.2f} } {{valuta_simbolo}}/{{unita_peso_str}})</i><br>
-        - Resina: {{kg_resina_cliente:.1f} } {{unita_peso_str}} <i>(a {{prezzo_resina_cliente:.2f} } {{valuta_simbolo}}/{{unita_peso_str}})</i><br>
-        <b>Ore di lavoro previste:</b> {{ore_cliente}} h
+        <b>Tecnologia Cliente:</b> {tecnologia}<br>
+        - Materiale Base: {kg_cliente:.1f} {unita_peso_str} <i>(a {prezzo_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br>
+        - Resina: {kg_resina_cliente:.1f} {unita_peso_str} <i>(a {prezzo_resina_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br>
+        <b>Ore di lavoro previste:</b> {ore_cliente} h
     </div>
     """, unsafe_allow_html=True)
     
@@ -293,7 +293,7 @@ with col_chart1:
     fig_costi.add_trace(go.Bar(
         x=['Sistema INTEC', 'Metodo Cliente'], y=[tot_generale_intec, tot_generale_cliente],
         marker_color=['#008F99', '#4A4A4A'],
-        text=[f"{{tot_generale_intec:,.2f}} {{valuta_simbolo}}", f"{{tot_generale_cliente:,.2f}} {{valuta_simbolo}}"],
+        text=[f"{tot_generale_intec:,.2f} {valuta_simbolo}", f"{tot_generale_cliente:,.2f} {valuta_simbolo}"],
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_costi.update_layout(
@@ -310,7 +310,7 @@ with col_chart2:
     fig_ore.add_trace(go.Bar(
         x=['Sistema INTEC', 'Metodo Cliente'], y=[ore_intec, ore_cliente],
         marker_color=['#008F99', '#4A4A4A'],
-        text=[f"{{ore_intec:.1f}} h", f"{{ore_cliente:.1f}} h"],
+        text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto', textfont=dict(color='white'), width=0.4
     ))
     fig_ore.update_layout(
@@ -329,12 +329,12 @@ ore_risparmiate = ore_cliente - ore_intec
 
 col_res1, col_res2 = st.columns(2)
 with col_res1:
-    st.metric(label=f"TOTALE MATERIALI INTEC (IVA Incl.)", value=f"{{tot_generale_intec:,.2f}} {{valuta_simbolo}}")
+    st.metric(label=f"TOTALE MATERIALI INTEC (IVA Incl.)", value=f"{tot_generale_intec:,.2f} {valuta_simbolo}")
 with col_res2:
-    st.metric(label=f"TOTALE MATERIALI CLIENTE (IVA Incl.)", value=f"{{tot_generale_cliente:,.2f} } {{valuta_simbolo}}")
+    st.metric(label=f"TOTALE MATERIALI CLIENTE (IVA Incl.)", value=f"{tot_generale_cliente:,.2f} {valuta_simbolo}")
 
 if tot_generale_cliente > 0:
-    st.success(f"💰 **Risparmio Netto sui Materiali:** {{risparmio_economico:,.2f} } {{valuta_simbolo}} | ⏱️ **Tempo Guadagnato:** {{ore_risparmiate:.1f}} ore")
+    st.success(f"💰 **Risparmio Netto sui Materiali:** {risparmio_economico:,.2f} {valuta_simbolo} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore")
 
 st.markdown("---")
 st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.</p>", unsafe_allow_html=True)
