@@ -130,10 +130,16 @@ with col_intec:
     # Motore R999
     if kg_r999 < 175.0:
         latte_r999 = kg_r999 / 25.0
-        testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} {'pails (25 kg)' if is_us_market else 'latte (da 25 kg)'}] — *laminazione 2 strati*"
+        if is_us_market:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} pails (25 kg)] — *laminazione 2 strati*"
+        else:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{latte_r999:.1f} latte (da 25 kg)] — *laminazione 2 strati*"
     else:
         fusti_r999 = kg_r999 / 225.0
-        testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums' if is_us_market else f'{fusti_r999:.1f} fusti (da 225 kg)'}] — *laminazione 2 strati*"
+        if is_us_market:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums] — *laminazione 2 strati*"
+        else:
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999:.1f} fusti (da 225 kg)] — *laminazione 2 strati*"
 
     # MOTORE LOGISTICO PASTA BASE (Logica Volumetrica con +4mm geometrie)
     spessore_calcolo = spessore_mm + 4.0
