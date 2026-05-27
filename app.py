@@ -85,15 +85,18 @@ st.markdown(f"""
 # 2. INTESTAZIONE PERSONALIZZATA
 st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Efficienza e ROI</h3>", unsafe_allow_html=True)
 
-col_hdr1, col_hdr2 = st.columns(2)
+col_hdr1, col_hdr2, col_hdr3 = st.columns(3)
 with col_hdr1:
-    nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
+    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Giovanni Rosano")
 with col_hdr2:
+    nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
+with col_hdr3:
     data_offerta = st.date_input("📅 Data Offerta:", value=datetime.date.today(), format="DD/MM/YYYY")
 
 # Testo fantasma intestazione (visibile solo in PDF)
+commerciale_display = nome_commerciale if nome_commerciale else "Non specificato"
 cliente_display = nome_cliente if nome_cliente else "Non specificato"
-st.markdown(f"<div class='print-text' style='text-align: center; font-size: 12px;'><b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='print-text' style='text-align: center; font-size: 12px;'><b>💼 Commerciale INTEC:</b> {commerciale_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -136,7 +139,7 @@ unita_peso_str = "lbs" if is_us_market else "kg"
 
 # --- COLONNA INTEC ---
 with col_intec:
-    # --- MODIFICA PALLINO TEAL ---
+    # Pallino Teal
     st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #008F99; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Sistema INTEC</h3>", unsafe_allow_html=True)
     
     col_sel1, col_sel2 = st.columns(2)
@@ -246,7 +249,7 @@ with col_intec:
 
 # --- COLONNA CLIENTE ---
 with col_cliente:
-    # --- MODIFICA PALLINO GRIGIO ---
+    # Pallino Grigio
     st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #4A4A4A; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Metodo Attuale Cliente</h3>", unsafe_allow_html=True)
     
     tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
