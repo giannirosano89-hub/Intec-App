@@ -246,7 +246,9 @@ with col_intec:
 
 # --- COLONNA CLIENTE ---
 with col_cliente:
-    st.subheader("⚪ Metodo Attuale Cliente")
+    # --- MODIFICA PALLINO GRIGIO ---
+    st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #4A4A4A; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Metodo Attuale Cliente</h3>", unsafe_allow_html=True)
+    
     tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
     
     # Inserimento Quantità Separate Cliente
