@@ -47,7 +47,9 @@ st.markdown(f"""
             
             div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; display: inline-block !important; vertical-align: top; }}
             div[data-testid="stMetric"] {{ padding: 0 !important; margin: 0 !important; }}
-            div[data-testid="stAlert"] {{ background-color: white !important; border: 2px solid #008F99 !important; padding: 10px !important; color: black !important; margin-bottom: 5px !important; }}
+            
+            /* STILE BOX INFORMATIVI PER STAMPA */
+            div[data-testid="stAlert"] {{ background-color: white !important; border: 2px solid #008F99 !important; padding: 10px !important; color: black !important; margin-bottom: 10px !important; }}
             div[data-testid="stAlert"] * {{ color: black !important; }}
             
             h3 {{ font-size: 16px !important; margin-top: 5px !important; margin-bottom: 5px !important; }}
@@ -114,7 +116,17 @@ col_r_int, col_r_cli = st.columns(2)
 # --- FASE 1: INTEC ---
 with col_r_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (R999)</span>", unsafe_allow_html=True)
-    tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", list(moltiplicatori_r999.keys()))
+    tecnologia_r_intec = st.selectbox("Tecnologia INTEC:", ["R999 Intec"], key="tec_r_int")
+    metodo_app_intec = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_int")
+    
+    if "MAT" in tipo_rinforzo if 'tipo_rinforzo' in locals() else "MAT 300":
+        pass 
+
+    col_r1, col_r2 = st.columns(2)
+    with col_r1:
+        tipo_rinforzo = st.selectbox("Tipo di Rinforzo:", list(moltiplicatori_r999.keys()))
+    with col_r2:
+        prezzo_resina_input = st.number_input(f"Prezzo R999 ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=5.00, step=0.1)
     
     if "MAT" in tipo_rinforzo:
         kg_r999 = superficie_m2 * moltiplicatori_r999[tipo_rinforzo]
@@ -132,29 +144,30 @@ with col_r_int:
         testo_log_r999 = f"[{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums from 55 gal]" if is_us_market else f"[{fusti_r999:.1f} fusti (da 225 kg)]"
 
     testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
-    st.info(f"**Specifiche:**\n- 🧪 **R999 ({tipo_rinforzo}):** {testo_r999}")
     
     col_prezzi_r1, col_prezzi_r2 = st.columns(2)
     with col_prezzi_r1:
-        prezzo_resina_input = st.number_input(f"Prezzo R999 ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=5.00, step=0.1)
+        ore_r999_base = superficie_m2 * (20.0 / 60.0)
+        ore_r999_intec = st.number_input("Ore manodopera (20 min/m²):", min_value=0.0, value=float(ore_r999_base), step=0.5)
     with col_prezzi_r2:
         costo_orario_r_intec = st.number_input(f"Tariffa Lavoro ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_r_int")
-    
-    ore_r999_base = superficie_m2 * (20.0 / 60.0)
-    ore_r999_intec = st.number_input("Ore manodopera (20 min/m²):", min_value=0.0, value=float(ore_r999_base), step=0.5)
     
     # Calcolo Costi Fase 1 INTEC
     costo_mat_r_intec = (kg_r999 * 2.20462 if is_us_market else kg_r999) * prezzo_resina_input
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
     tot_fase1_intec = costo_mat_r_intec + costo_mano_r_intec
     
-    st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
+    # Specifiche spostate in basso vicino al subtotale
+    st.info(f"**Specifiche Laminazione:**\n- 🧪 **R999 ({tipo_rinforzo}):** {testo_r999}\n- ⏱专 **Manodopera:** {ore_r999_intec:.1f} h")
+    
+    st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- Metodo: {metodo_app_intec}<br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.success(f"**Subtotale Fase 1 (INTEC):** {tot_fase1_intec:,.2f} {valuta_simbolo}")
 
 # --- FASE 1: CLIENTE ---
 with col_r_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Resina)</span>", unsafe_allow_html=True)
-    tecnologia_r_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Duratec"])
+    tecnologia_r_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Duratec"], key="tec_r_cli")
+    metodo_app_cliente = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"], key="app_r_cli")
     
     costo_mat_r_cliente = st.number_input(f"Costo Totale Materiale ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0, key="mat_r_cli")
     
@@ -168,7 +181,7 @@ with col_r_cli:
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
     
-    st.markdown(f"<div class='print-text'><b>Fase 1 Cliente ({tecnologia_r_cliente}):</b><br>- Costo Mat.: {costo_mat_r_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_r_cliente:.1f} h (a {costo_orario_r_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='print-text'><b>Fase 1 Cliente ({tecnologia_r_cliente}):</b><br>- Metodo: {metodo_app_cliente}<br>- Costo Mat.: {costo_mat_r_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_r_cliente:.1f} h (a {costo_orario_r_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.info(f"**Subtotale Fase 1 (Cliente):** {tot_fase1_cliente:,.2f} {valuta_simbolo}")
 
 st.markdown("---")
@@ -216,7 +229,7 @@ with col_p_int:
 # --- FASE 2: CLIENTE ---
 with col_p_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Paste)</span>", unsafe_allow_html=True)
-    tecnologia_p_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spraycore"])
+    tecnologia_p_cliente = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spraycore"], key="tec_p_cli")
     
     costo_mat_p_cliente = st.number_input(f"Costo Totale Materiale ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0, key="mat_p_cli")
     
