@@ -97,7 +97,6 @@ else:
     superficie_sqft = superficie
     superficie_m2 = superficie / 10.7639
 
-# LOGICA SEPARATA E INDIPENDENTE (Modifica Richiesta)
 is_dollar = (valuta == "Dollaro ($)")
 is_sqft = (unita == "Piedi Quadri (sq ft)")
 
@@ -149,14 +148,8 @@ with col_r_int:
     display_r999 = kg_r999 * 2.20462 if is_sqft else kg_r999
     unita_r999 = "lbs" if is_sqft else "kg"
         
-    if kg_r999 < 175.0:
-        latte_r999 = kg_r999 / 25.0
-        testo_log_r999 = f"[{latte_r999:.1f} {'pails (25 kg)' if is_sqft else 'latte (da 25 kg)'}]"
-    else:
-        fusti_r999 = kg_r999 / 225.0
-        testo_log_r999 = f"[{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums from 55 gal]" if is_sqft else f"[{fusti_r999:.1f} fusti (da 225 kg)]"
-
-    testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
+    # Pulito dal calcolo latte/fusti
+    testo_r999 = f"{display_r999:.2f} {unita_r999} — *laminazione 2 strati*"
     
     if is_spray_intec:
         ore_r999_base = superficie_m2 * (2.0 / 60.0)
@@ -341,4 +334,4 @@ if tot_generale_cliente > 0:
         st.error(f"📉 **Differenza Costi (Mat. + Lavoro):** {risparmio_economico:,.2f} {valuta_simbolo} | ⏱️ **Differenza Ore:** {ore_risparmiate:.1f} ore")
 
 st.markdown("---")
-st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi. I costi esposti sommano materiale e manodopera calcolati per tutte le fases.</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi. I costi esposti sommano materiale e manodopera calcolati per tutte le fasi.</p>", unsafe_allow_html=True)
