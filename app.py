@@ -21,7 +21,7 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS AGGIORNATO: GESTIONE SPAZI E TESTI FANTASMA PER LA STAMPA SU SINGOLA PAGINA
+# CSS AGGIORNATO: RISOLTO BUG BLOCCO NERO, LOGO E TESTI PIU' GRANDI
 st.markdown(f"""
     <style>
         .block-container {{ padding-top: 2.5rem !important; padding-bottom: 0.5rem !important; }}
@@ -39,39 +39,49 @@ st.markdown(f"""
         }}
         
         @media print {{
-            @page {{ margin: 0.3cm; size: A4 portrait; }} 
+            @page {{ margin: 0.5cm; size: A4 portrait; }} 
             
-            /* NASCONDE I CAMPI DI INSERIMENTO IN STAMPA */
-            .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header[data-testid="stHeader"], [data-testid="stSidebar"] {{
+            /* NASCONDE I CAMPI DI INSERIMENTO E PIE' DI PAGINA IN STAMPA */
+            .stButton, .stNumberInput, .stSelectbox, .stDateInput, .stTextInput, header[data-testid="stHeader"], [data-testid="stSidebar"], footer, #MainMenu {{
                 display: none !important;
             }}
             
-            /* MOSTRA I TESTI FANTASMA SOLO IN STAMPA */
+            /* MOSTRA I TESTI FANTASMA INGRANDITI */
             .print-text {{ 
                 display: block !important; 
-                font-size: 11px !important; 
-                margin-top: 2px !important; 
-                margin-bottom: 6px !important; 
-                line-height: 1.3 !important;
+                font-size: 13px !important; 
+                margin-top: 5px !important; 
+                margin-bottom: 8px !important; 
+                line-height: 1.4 !important;
                 color: black !important;
             }}
             
             .main, .block-container {{ background-color: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }}
             .logo-dark {{ display: none !important; }}
             
-            /* LOGO PIU' PICCOLO E SPAZI RIDOTTI */
-            .logo-light {{ display: block !important; width: 160px !important; margin: 0 auto 2px auto !important; }}
+            /* LOGO PIU' GRANDE */
+            .logo-light {{ display: block !important; width: 250px !important; margin: 0 auto 10px auto !important; }}
             div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; min-width: 48% !important; display: inline-block !important; vertical-align: top; }}
             div[data-testid="stMetric"] {{ padding: 0 !important; margin: 0 !important; }}
-            div[data-testid="stAlert"] {{ padding: 4px 8px !important; margin-bottom: 2px !important; }}
             
-            /* COMPRESSIONE TESTI */
-            h3 {{ font-size: 14px !important; margin-top: 2px !important; margin-bottom: 2px !important; }}
-            h4 {{ font-size: 12px !important; margin-top: 4px !important; margin-bottom: 2px !important; }}
-            p, ul, li {{ margin-top: 1px !important; margin-bottom: 1px !important; padding: 0 !important; font-size: 11px !important; }}
-            hr {{ margin: 3px 0 !important; border-top: 1px solid #ccc !important; }}
+            /* RISOLTO BLOCCO NERO BANNER FINALE E COMPRESSO */
+            div[data-testid="stAlert"] {{ 
+                background-color: white !important; 
+                color: black !important; 
+                border: 2px solid #008F99 !important; 
+                padding: 10px !important; 
+                margin-top: 5px !important;
+                margin-bottom: 5px !important;
+            }}
+            div[data-testid="stAlert"] * {{ color: black !important; }}
             
-            .js-plotly-plot .plotly text {{ fill: #000000 !important; }}
+            /* TESTI PIU' GRANDI E LEGGIBILI */
+            h3 {{ font-size: 16px !important; margin-top: 5px !important; margin-bottom: 5px !important; }}
+            h4 {{ font-size: 14px !important; margin-top: 8px !important; margin-bottom: 5px !important; }}
+            p, ul, li {{ margin-top: 3px !important; margin-bottom: 3px !important; padding: 0 !important; font-size: 12px !important; }}
+            hr {{ margin: 8px 0 !important; border-top: 1px solid #ccc !important; }}
+            
+            .js-plotly-plot .plotly text {{ fill: #000000 !important; font-size: 12px !important; }}
         }}
     </style>
     <div class="logo-outer-container">
@@ -87,7 +97,7 @@ st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Effic
 
 col_hdr1, col_hdr2, col_hdr3 = st.columns(3)
 with col_hdr1:
-    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Mario Rossi")
+    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Giovanni Rosano")
 with col_hdr2:
     nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
 with col_hdr3:
@@ -96,7 +106,7 @@ with col_hdr3:
 # Testo fantasma intestazione (visibile solo in PDF)
 commerciale_display = nome_commerciale if nome_commerciale else "Non specificato"
 cliente_display = nome_cliente if nome_cliente else "Non specificato"
-st.markdown(f"<div class='print-text' style='text-align: center; font-size: 12px;'><b>💼 Commerciale INTEC:</b> {commerciale_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='print-text' style='text-align: center; font-size: 13px;'><b>💼 Commerciale INTEC:</b> {commerciale_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -117,7 +127,7 @@ st.markdown("#### 1. Configurazione Progetto")
 col_gen1, col_gen2, col_gen3 = st.columns(3)
 
 with col_gen1:
-    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=0.0, step=1.0)
+    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=10.0, step=1.0)
 with col_gen2:
     unita = st.selectbox("Unità di Misura:", ["Metri Quadri (m²)", "Piedi Quadri (sq ft)"])
 with col_gen3:
@@ -299,14 +309,14 @@ with col_chart1:
         x=['Sistema INTEC', 'Metodo Cliente'], y=[tot_generale_intec, tot_generale_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{tot_generale_intec:,.2f} {valuta_simbolo}", f"{tot_generale_cliente:,.2f} {valuta_simbolo}"],
-        textposition='auto', textfont=dict(color='white'), width=0.4
+        textposition='auto', textfont=dict(color='white'), width=0.35 # Ridotto lo spessore delle barre
     ))
     fig_costi.update_layout(
-        height=190, 
+        height=220, 
         title=dict(text="Costo Materiali", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=0, r=0, t=25, b=0)
+        margin=dict(l=20, r=20, t=30, b=20)
     )
     st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
@@ -316,14 +326,14 @@ with col_chart2:
         x=['Sistema INTEC', 'Metodo Cliente'], y=[ore_intec, ore_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
-        textposition='auto', textfont=dict(color='white'), width=0.4
+        textposition='auto', textfont=dict(color='white'), width=0.35 # Ridotto lo spessore delle barre
     ))
     fig_ore.update_layout(
-        height=190, 
+        height=220, 
         title=dict(text="Ore di Lavoro", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=0, r=0, t=25, b=0)
+        margin=dict(l=20, r=20, t=30, b=20)
     )
     st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
