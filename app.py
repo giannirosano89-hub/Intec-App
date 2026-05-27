@@ -220,7 +220,7 @@ with col_cliente:
 st.markdown("---")
 
 # 5. GRAFICI
-st.markdown("#### 3. Risultati")
+st.markdown("#### 3. Grafico Risultati")
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
