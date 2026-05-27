@@ -21,7 +21,7 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS AGGIORNATO: RISOLTO BUG BLOCCO NERO, LOGO E TESTI PIU' GRANDI
+# CSS AGGIORNATO: RISOLTO BUG TAGLIO GRAFICI IN STAMPA
 st.markdown(f"""
     <style>
         .block-container {{ padding-top: 2.5rem !important; padding-bottom: 0.5rem !important; }}
@@ -64,7 +64,7 @@ st.markdown(f"""
             div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; min-width: 48% !important; display: inline-block !important; vertical-align: top; }}
             div[data-testid="stMetric"] {{ padding: 0 !important; margin: 0 !important; }}
             
-            /* RISOLTO BLOCCO NERO BANNER FINALE E COMPRESSO */
+            /* RISOLTO BLOCCO NERO BANNER FINALE */
             div[data-testid="stAlert"] {{ 
                 background-color: white !important; 
                 color: black !important; 
@@ -74,6 +74,10 @@ st.markdown(f"""
                 margin-bottom: 5px !important;
             }}
             div[data-testid="stAlert"] * {{ color: black !important; }}
+            
+            /* FORZATURA GRAFICI: IMPEDISCE IL TAGLIO A DESTRA DELLA COLONNA CLIENTE */
+            .stPlotlyChart {{ width: 100% !important; max-width: 100% !important; overflow: hidden !important; }}
+            svg.main-svg {{ width: 100% !important; max-width: 100% !important; }}
             
             /* TESTI PIU' GRANDI E LEGGIBILI */
             h3 {{ font-size: 16px !important; margin-top: 5px !important; margin-bottom: 5px !important; }}
@@ -309,14 +313,15 @@ with col_chart1:
         x=['Sistema INTEC', 'Metodo Cliente'], y=[tot_generale_intec, tot_generale_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{tot_generale_intec:,.2f} {valuta_simbolo}", f"{tot_generale_cliente:,.2f} {valuta_simbolo}"],
-        textposition='auto', textfont=dict(color='white'), width=0.35 # Ridotto lo spessore delle barre
+        textposition='auto', textfont=dict(color='white'), width=0.35
     ))
     fig_costi.update_layout(
         height=220, 
         title=dict(text="Costo Materiali", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=20, r=20, t=30, b=20)
+        # Aumentato il margine destro per evitare tagli in stampa
+        margin=dict(l=10, r=40, t=30, b=20) 
     )
     st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
@@ -326,14 +331,15 @@ with col_chart2:
         x=['Sistema INTEC', 'Metodo Cliente'], y=[ore_intec, ore_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
-        textposition='auto', textfont=dict(color='white'), width=0.35 # Ridotto lo spessore delle barre
+        textposition='auto', textfont=dict(color='white'), width=0.35
     ))
     fig_ore.update_layout(
         height=220, 
         title=dict(text="Ore di Lavoro", font=dict(size=13)), 
         yaxis=dict(showgrid=True),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=20, r=20, t=30, b=20)
+        # Aumentato il margine destro per evitare tagli in stampa
+        margin=dict(l=10, r=40, t=30, b=20)
     )
     st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
 
