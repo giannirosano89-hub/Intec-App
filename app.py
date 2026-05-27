@@ -68,7 +68,7 @@ st.markdown("<h3 style='text-align: center; margin-top: 0;'>Calcolatore di Effic
 
 col_hdr1, col_hdr2, col_hdr3 = st.columns(3)
 with col_hdr1:
-    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Es. Giovanni Rosano")
+    nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", placeholder="Nome Cognome")
 with col_hdr2:
     nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
 with col_hdr3:
@@ -197,7 +197,7 @@ with col_intec:
 # --- COLONNA CLIENTE ---
 with col_cliente:
     st.markdown("<h3 style='margin-bottom: 0px;'> <span style='display: inline-block; width: 15px; height: 15px; background-color: #4A4A4A; border-radius: 50%; vertical-align: middle; margin-right: 5px;'></span>Metodo Attuale Cliente</h3>", unsafe_allow_html=True)
-    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
+    tecnologia = st.selectbox("Tecnologia Corrente:", ["Epossidica", "Spraycore"])
     
     col_q_cli1, col_q_cli2 = st.columns(2)
     with col_q_cli1:
@@ -207,25 +207,25 @@ with col_cliente:
     
     col_p_cli1, col_p_cli2 = st.columns(2)
     with col_p_cli1:
-        prezzo_cliente = st.number_input(f"Prezzo Mat. Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.5)
+        prezzo_cliente = st.number_input(f"Prezzo Materiale Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.5)
     with col_p_cli2:
         prezzo_resina_cliente = st.number_input(f"Prezzo Resina Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.5)
     
-    ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
+    ore_cliente = st.number_input(f"Ore totali manodopera Cliente:", min_value=0.0, value=0.0, step=1.0)
     
-    st.markdown(f"<div class='print-text'><b>Tecnologia Cliente:</b> {tecnologia}<br>- Materiale Base: {kg_cliente:.1f} {unita_peso_str} <i>(a {prezzo_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br>- Resina: {kg_resina_cliente:.1f} {unita_peso_str} <i>(a {prezzo_resina_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br><b>Ore di lavoro previste:</b> {ore_cliente} h</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='print-text'><b>Metodo Cliente:</b> {tecnologia}<br>- Materiale Base: {kg_cliente:.1f} {unita_peso_str} <i>(a {prezzo_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br>- Resina: {kg_resina_cliente:.1f} {unita_peso_str} <i>(a {prezzo_resina_cliente:.2f} {valuta_simbolo}/{unita_peso_str})</i><br><b>Ore di lavoro previste:</b> {ore_cliente} h</div>", unsafe_allow_html=True)
     
     tot_generale_cliente = (kg_cliente * prezzo_cliente) + (kg_resina_cliente * prezzo_resina_cliente)
 
 st.markdown("---")
 
 # 5. GRAFICI
-st.markdown("#### 3. Impatto Visivo Risultati")
+st.markdown("#### 3. Risultati")
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
     fig_costi = go.Figure(go.Bar(
-        x=['Sistema INTEC', 'Metodo Cliente'], y=[tot_generale_intec, tot_generale_cliente],
+        x=['Sistema INTEC', 'Sistema Cliente'], y=[tot_generale_intec, tot_generale_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{tot_generale_intec:,.2f} {valuta_simbolo}", f"{tot_generale_cliente:,.2f} {valuta_simbolo}"],
         textposition='auto', textfont=dict(color='white'), width=0.35
@@ -235,7 +235,7 @@ with col_chart1:
 
 with col_chart2:
     fig_ore = go.Figure(go.Bar(
-        x=['Sistema INTEC', 'Metodo Cliente'], y=[ore_intec, ore_cliente],
+        x=['Sistema INTEC', 'Sistema Cliente'], y=[ore_intec, ore_cliente],
         marker_color=['#008F99', '#4A4A4A'],
         text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
         textposition='auto', textfont=dict(color='white'), width=0.35
@@ -250,9 +250,9 @@ ore_risparmiate = ore_cliente - ore_intec
 
 col_res1, col_res2 = st.columns(2)
 with col_res1:
-    st.metric(label=f"TOTALE MATERIALI INTEC (IVA Incl.)", value=f"{tot_generale_intec:,.2f} {valuta_simbolo}")
+    st.metric(label=f"TOTALE COSTO INTEC (IVA Incl.)", value=f"{tot_generale_intec:,.2f} {valuta_simbolo}")
 with col_res2:
-    st.metric(label=f"TOTALE MATERIALI CLIENTE (IVA Incl.)", value=f"{tot_generale_cliente:,.2f} {valuta_simbolo}")
+    st.metric(label=f"TOTALE COSTO CLIENTE (IVA Incl.)", value=f"{tot_generale_cliente:,.2f} {valuta_simbolo}")
 
 if tot_generale_cliente > 0:
     st.success(f"💰 **Risparmio Netto sui Materiali:** {risparmio_economico:,.2f} {valuta_simbolo} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore")
