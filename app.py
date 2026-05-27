@@ -117,7 +117,7 @@ col_r_int, col_r_cli = st.columns(2)
 with col_r_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (R999)</span>", unsafe_allow_html=True)
     
-    # Casella di testo simulata per allineamento perfetto con il menu a tendina "Tecnologia Concorrente"
+    # Casella di testo simulata per allineamento perfetto
     st.markdown("""
         <div style="margin-bottom: 1rem;">
             <label style="font-size: 14px; display: block; margin-bottom: 0.5rem; color: inherit;">Tecnologia INTEC:</label>
@@ -145,21 +145,13 @@ with col_r_int:
     display_r999 = kg_r999 * 2.20462 if is_us_market else kg_r999
     unita_r999 = "lbs" if is_us_market else "kg"
         
-    if kg_r999 < 175.0:
-        latte_r999 = kg_r999 / 25.0
-        testo_log_r999 = f"[{latte_r999:.1f} {'pails (25 kg)' if is_us_market else 'latte (da 25 kg)'}]"
-    else:
-        fusti_r999 = kg_r999 / 225.0
-        testo_log_r999 = f"[{fusti_r999*55.0:.1f} gallons / {fusti_r999:.1f} drums from 55 gal]" if is_us_market else f"[{fusti_r999:.1f} fusti (da 225 kg)]"
-
-    testo_r999 = f"{display_r999:.2f} {unita_r999} {testo_log_r999} — *laminazione 2 strati*"
+    # Pulizia box: testo resa dritto al punto
+    testo_r999 = f"{display_r999:.2f} {unita_r999} — *laminazione 2 strati*"
     
     if is_spray_intec:
         ore_r999_base = superficie_m2 * (2.0 / 60.0)
-        testo_calc_ore = "1 m² = 2 min (Spruzzo)"
     else:
         ore_r999_base = superficie_m2 * (20.0 / 60.0)
-        testo_calc_ore = "1 m² = 20 min (Manuale)"
         
     col_prezzi_r1, col_prezzi_r2 = st.columns(2)
     with col_prezzi_r1:
@@ -171,12 +163,13 @@ with col_r_int:
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
     tot_fase1_intec = costo_mat_r_intec + costo_mano_r_intec
     
-    # Box Specifiche INTEC
+    # Box Specifiche INTEC Pulito
     rinforzo_intec_display = "N/D (Spruzzo)" if is_spray_intec else tipo_rinforzo
     st.info(f"""**Specifiche Laminazione:**
-- 🛠️ **Metodo:** {metodo_app_intec}
-- 🧪 **R999 ({rinforzo_intec_display}):** {testo_r999}
-- ⏱️ **Manodopera:** {ore_r999_intec:.1f} h *(calcolo: {testo_calc_ore})*""")
+- 🛠️ **Tecnologia:** Intec R999 ({metodo_app_intec})
+- 🧶 **Rinforzo:** {rinforzo_intec_display}
+- 🧪 **Resa R999:** {testo_r999}
+- ⏱️ **Manodopera:** {ore_r999_intec:.1f} h""")
     
     st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- Tecnologia: R999 Intec (Rapporto 1:2,5)<br>- Metodo: {metodo_app_intec}<br>- Rinforzo: {rinforzo_intec_display}<br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.success(f"**Subtotale Fase 1 (INTEC):** {tot_fase1_intec:,.2f} {valuta_simbolo}")
@@ -204,12 +197,11 @@ with col_r_cli:
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
     
-    # Box Specifiche CLIENTE
+    # Box Specifiche CLIENTE Pulito
     rinforzo_cliente_display = "N/D (Spruzzo)" if is_spray_cliente else tipo_rinforzo_cliente
     st.info(f"""**Specifiche Laminazione:**
 - 🛠️ **Tecnologia:** {tecnologia_r_cliente} ({metodo_app_cliente})
 - 🧶 **Rinforzo:** {rinforzo_cliente_display}
-- 💰 **Materiale Inserito:** {costo_mat_r_cliente:,.2f} {valuta_simbolo}
 - ⏱️ **Manodopera:** {ore_r_cliente:.1f} h""")
     
     st.markdown(f"<div class='print-text'><b>Fase 1 Cliente ({tecnologia_r_cliente}):</b><br>- Metodo: {metodo_app_cliente}<br>- Rinforzo: {rinforzo_cliente_display}<br>- Costo Mat.: {costo_mat_r_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_r_cliente:.1f} h (a {costo_orario_r_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
@@ -238,20 +230,23 @@ with col_p_int:
     else:
         testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {200.0 * peso_specifico:.0f} kg) — *spessore 16mm*"
     
-    prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1, key="prz_p_int")
-    
-    col_op1, col_op2 = st.columns(2)
-    with col_op1:
-        ore_paste_base = superficie_m2 / 5.0
-        ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
-    with col_op2:
+    col_prezzi_p1, col_prezzi_p2 = st.columns(2)
+    with col_prezzi_p1:
+        prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1, key="prz_p_int")
+    with col_prezzi_p2:
         costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_int")
+        
+    ore_paste_base = superficie_m2 / 5.0
+    ore_paste_intec = st.number_input("Ore manodopera Paste:", min_value=0.0, value=float(ore_paste_base), step=0.5, key="ore_p_int")
 
     costo_mat_p_intec = (kg_prodotto * 2.20462 if is_us_market else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
     tot_fase2_intec = costo_mat_p_intec + costo_mano_p_intec
     
-    st.info(f"**Specifiche Paste:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- ⏱️ **Manodopera:** {ore_paste_intec:.1f} h *(calcolo: 1 ora = 5 m²)*")
+    # Box Specifiche INTEC Paste
+    st.info(f"""**Specifiche Paste:**
+- 📦 **{prodotto_intec}:** {testo_prodotto}
+- ⏱️ **Manodopera:** {ore_paste_intec:.1f} h""")
     
     st.markdown(f"<div class='print-text'><b>Fase 2 INTEC:</b><br>- Pasta {prodotto_intec}: {prezzo_pasta_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_paste_intec:.1f} h (a {costo_orario_p_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase2_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.success(f"**Subtotale Fase 2 (INTEC):** {tot_fase2_intec:,.2f} {valuta_simbolo}")
@@ -267,12 +262,15 @@ with col_p_cli:
     with col_c_op1:
         ore_p_cliente = st.number_input(f"Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0, key="ore_p_cli")
     with col_c_op2:
-        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_cli")
+        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_p_cli")
         
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
     tot_fase2_cliente = costo_mat_p_cliente + costo_mano_p_cliente
     
-    st.info(f"**Specifiche Applicazione Paste:**\n- 🛠️ **Tecnologia:** {tecnologia_p_cliente}\n- 💰 **Materiale Inserito:** {costo_mat_p_cliente:,.2f} {valuta_simbolo}\n- ⏱️ **Manodopera:** {ore_p_cliente:.1f} h")
+    # Box Specifiche CLIENTE Paste
+    st.info(f"""**Specifiche Applicazione Paste:**
+- 🛠️ **Tecnologia:** {tecnologia_p_cliente}
+- ⏱️ **Manodopera:** {ore_p_cliente:.1f} h""")
     
     st.markdown(f"<div class='print-text'><b>Fase 2 Cliente ({tecnologia_p_cliente}):</b><br>- Costo Mat.: {costo_mat_p_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_p_cliente:.1f} h (a {costo_orario_p_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase2_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.info(f"**Subtotale Fase 2 (Cliente):** {tot_fase2_cliente:,.2f} {valuta_simbolo}")
