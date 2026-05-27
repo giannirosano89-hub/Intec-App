@@ -117,7 +117,7 @@ st.markdown("#### 1. Configurazione Progetto")
 col_gen1, col_gen2, col_gen3 = st.columns(3)
 
 with col_gen1:
-    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=10.0, step=1.0)
+    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=0.0, step=1.0)
 with col_gen2:
     unita = st.selectbox("Unità di Misura:", ["Metri Quadri (m²)", "Piedi Quadri (sq ft)"])
 with col_gen3:
