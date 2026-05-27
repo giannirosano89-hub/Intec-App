@@ -171,7 +171,7 @@ with col_r_int:
 - 🛠️ **Tecnologia:** Intec R999 ({metodo_app_intec})
 - 🧶 **Rinforzo:** {rinforzo_intec_display}
 - 🧪 **Resa R999:** {testo_r999}
-- ⏱️ **Manodopera:** {ore_r999_intec:.1f} h""")
+- ⏱️ **Manodopera:** {ore_r999_intec:.1f} h *(1 operaio)*""")
     
     st.markdown(f"<div class='print-text'><b>Fase 1 INTEC:</b><br>- Tecnologia: R999 Intec (Rapporto 1:2,5)<br>- Metodo: {metodo_app_intec}<br>- Rinforzo: {rinforzo_intec_display}<br>- R999: {prezzo_resina_input:.2f} {valuta_simbolo}/{unita_peso_str}<br>- Ore: {ore_r999_intec:.1f} h (a {costo_orario_r_intec:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase1_intec:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
     st.success(f"**Subtotale Fase 1 (INTEC):** {tot_fase1_intec:,.2f} {valuta_simbolo}")
