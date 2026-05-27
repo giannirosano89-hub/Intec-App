@@ -1,7 +1,8 @@
-streamlit>=1.35.0
-plotly>=5.20.0
-reportlab>=4.1.0
-matplotlib>=3.8.0
+import streamlit as st
+import plotly.graph_objects as go
+import base64
+import datetime
+from pdf_export import genera_pdf
 
 # ─────────────────────────────────────────────
 # COSTANTI CENTRALIZZATE
@@ -406,12 +407,12 @@ def main():
 
     # ── BANNER FINALE ─────────────────────────────────────────────────
     st.markdown("---")
-    risparmio  = tot_cliente - tot_intec
-    ore_guad   = ore_cliente - ore_intec
+    risparmio = tot_cliente - tot_intec
+    ore_guad  = ore_cliente - ore_intec
 
     r1, r2 = st.columns(2)
     with r1:
-        st.metric("TOTALE MATERIALI INTEC (IVA incl.)",  f"{tot_intec:,.2f} {v_sim}")
+        st.metric("TOTALE MATERIALI INTEC (IVA incl.)",   f"{tot_intec:,.2f} {v_sim}")
     with r2:
         st.metric("TOTALE MATERIALI CLIENTE (IVA incl.)", f"{tot_cliente:,.2f} {v_sim}")
 
@@ -428,6 +429,61 @@ def main():
         "in base alla temperatura e alla catalisi.</p>",
         unsafe_allow_html=True,
     )
+
+    # ── ESPORTAZIONE PDF ──────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("#### 📄 Esportazione Report")
+
+    if st.button("Genera PDF", type="primary"):
+        pdf_data = {
+            # Intestazione
+            "commerciale": nome_commerciale,
+            "cliente":     nome_cliente,
+            "data":        data_offerta,
+            # Configurazione
+            "superficie":  superficie,
+            "unita":       unita,
+            "valuta":      valuta,
+            # Contesto mercato
+            "us":              us,
+            "valuta_simbolo":  v_sim,
+            "unita_peso":      u_peso,
+            # INTEC
+            "prodotto":        prodotto,
+            "rinforzo":        rinforzo,
+            "testo_prodotto":  testo_prodotto(ris_prod, us, valuta),
+            "testo_r999":      testo_r999(kg_r999, us),
+            "prezzo_prodotto": prezzo_prodotto,
+            "prezzo_resina":   prezzo_resina,
+            "ore_intec":       ore_intec,
+            "tot_intec":       tot_intec,
+            # Cliente
+            "tecnologia":      tecnologia,
+            "kg_cliente":      kg_cliente,
+            "kg_resina_cli":   kg_resina_cli,
+            "prezzo_cli":      prezzo_cli,
+            "prezzo_res_cli":  prezzo_resina_cli,
+            "ore_cliente":     ore_cliente,
+            "tot_cliente":     tot_cliente,
+        }
+
+        with st.spinner("Generazione PDF in corso..."):
+            try:
+                pdf_bytes = genera_pdf(pdf_data)
+                nome_file = (
+                    f"INTEC_ROI_{nome_cliente or 'Report'}_"
+                    f"{data_offerta.strftime('%Y%m%d')}.pdf"
+                )
+                st.download_button(
+                    label="⬇️ Scarica PDF",
+                    data=pdf_bytes,
+                    file_name=nome_file,
+                    mime="application/pdf",
+                    type="primary",
+                )
+                st.success("✅ PDF generato con successo!")
+            except Exception as e:
+                st.error(f"Errore nella generazione del PDF: {e}")
 
 
 if __name__ == "__main__":
