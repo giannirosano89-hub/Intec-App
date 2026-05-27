@@ -148,7 +148,6 @@ with col_r_int:
     display_r999 = kg_r999 * 2.20462 if is_sqft else kg_r999
     unita_r999 = "lbs" if is_sqft else "kg"
         
-    # Pulito dal calcolo latte/fusti
     testo_r999 = f"{display_r999:.2f} {unita_r999} — *laminazione 2 strati*"
     
     if is_spray_intec:
@@ -193,7 +192,8 @@ with col_r_cli:
     with col_rc1:
         tipo_rinforzo_cliente = st.selectbox("Tipo di Rinforzo Cliente:", list(moltiplicatori_r999.keys()), disabled=is_spray_cliente, key="rinf_r_cli")
     with col_rc2:
-        costo_mat_r_cliente = st.number_input(f"Costo Totale Materiale Resina ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0, key="mat_r_cli")
+        # Aggiornato in Prezzo Unitario per calcolare correttamente il costo moltiplicando per la quantità
+        prezzo_r_cliente = st.number_input(f"Prezzo Resina Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.1, key="prz_r_cli")
     
     col_c_or1, col_c_or2 = st.columns(2)
     with col_c_or1:
@@ -201,6 +201,8 @@ with col_r_cli:
     with col_c_or2:
         costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0, key="tar_r_cli")
     
+    # Calcolo Costi corretto con Quantità * Prezzo
+    costo_mat_r_cliente = quantita_r_cliente * prezzo_r_cliente
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
     tot_fase1_cliente = costo_mat_r_cliente + costo_mano_r_cliente
     
