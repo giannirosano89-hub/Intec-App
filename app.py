@@ -110,11 +110,11 @@ except Exception as e:
     st.stop()
 
 # 4. CONFIGURAZIONE CANTIERE
-st.markdown("#### 1. Configurazione Progetto")
+st.markdown("#### 1. Configurazione Applicazione")
 col_gen1, col_gen2, col_gen3 = st.columns(3)
 
 with col_gen1:
-    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=10.0, step=1.0)
+    superficie = st.number_input("Superficie da trattare:", min_value=0.0, value=0.0, step=1.0)
 with col_gen2:
     unita = st.selectbox("Unità di Misura:", ["Metri Quadri (m²)", "Piedi Quadri (sq ft)"])
 with col_gen3:
@@ -243,15 +243,15 @@ with col_intec:
 # --- COLONNA CLIENTE ---
 with col_cliente:
     st.subheader("⚪ Metodo Attuale Cliente")
-    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
+    tecnologia = st.selectbox("Tecnologia Corrente:", ["Epossidica", "Spray"])
     
     # Inserimento Quantità Separate Cliente
     col_q_cli1, col_q_cli2 = st.columns(2)
     with col_q_cli1:
-        label_mat_cliente = "Materiale Cliente (lbs):" if is_us_market else "Materiale Cliente (KG):"
+        label_mat_cliente = "Quantitativo Materiale Cliente (lbs):" if is_us_market else "Quantitativo Materiale Cliente (KG):"
         kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
     with col_q_cli2:
-        label_res_cliente = "Resina Cliente (lbs):" if is_us_market else "Resina Cliente (KG):"
+        label_res_cliente = "Quantitativo Resina Cliente (lbs):" if is_us_market else "Quantitativo Resina Cliente (KG):"
         kg_resina_cliente = st.number_input(label_res_cliente, min_value=0.0, value=0.0, step=10.0)
     
     # Inserimento Prezzi Separati Cliente
@@ -263,7 +263,7 @@ with col_cliente:
         label_prezzo_res_cliente = "Costo Resina Cliente ($/lbs):" if is_us_market else "Costo Resina Cliente (€/KG):"
         prezzo_resina_cliente = st.number_input(label_prezzo_res_cliente, min_value=0.0, value=0.0, step=0.5)
     
-    ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
+    ore_cliente = st.number_input(f"Ore totali Manodopera Cliente:", min_value=0.0, value=0.0, step=1.0)
     
     # Testo fantasma dati CLIENTE
     st.markdown(f"""
