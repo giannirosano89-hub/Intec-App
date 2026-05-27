@@ -159,7 +159,7 @@ with col_intec:
     else:
         testo_prodotto = f"{kg_prodotto:.1f} kg [{fusti_prodotto:.1f} fusti (da {peso_fusto:.0f} kg)] — *spessore nominale {spessore_mm}mm*"
 
-    st.markdown(f"**Specifiche Tecniche:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- 🧪 **Resina R999 ({tipo_rinforzo}):** {testo_r999}")
+    st.markdown(f"**Specifiche Tecniche:**\n- 📦 **{prodotto_intec}:** {testo_prodotto}\n- 🧪 **Resina R999 Rapporto 1:2,5 :({tipo_rinforzo}):** {testo_r999}")
     
     col_prezzi1, col_prezzi2 = st.columns(2)
     with col_prezzi1: prezzo_intec_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1)
