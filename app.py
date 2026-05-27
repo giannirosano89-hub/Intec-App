@@ -150,9 +150,9 @@ with col_intec:
             galloni_r999 = fusti_r999 * 55.0
             testo_r999 = f"{display_r999:.2f} {unita_r999} [{galloni_r999:.1f} gallons / {fusti_r999:.1f} drums from 55 gal] — *laminazione 2 strati*"
         else:
-            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999:.1f} fusti (da 200 lt — 225 kg)] — *laminazione 2 strati*"
+            testo_r999 = f"{display_r999:.2f} {unita_r999} [{fusti_r999:.1f} fusti (da 225 kg)] — *laminazione 2 strati*"
 
-    # --- MOTORE MATEMATICO PRODOTTI BASE (Volume fisso 200 lt, peso variabile) ---
+    # --- MOTORE MATEMATICO PRODOTTI BASE (Volume fisso, peso variabile) ---
     peso_specifico = 0.7 if "07" in prodotto_intec else 1.0
     consumo_m2 = 20.0 * peso_specifico
     peso_fusto = 200.0 * peso_specifico
@@ -161,14 +161,14 @@ with col_intec:
     kg_prodotto = superficie_m2 * consumo_m2
     fusti_prodotto = kg_prodotto / peso_fusto 
     
-    # Formattazione condizionale con specifica del volume costante (200lt / 55gal)
+    # Formattazione condizionale senza i 200lt
     if is_us_market:
         galloni_per_fusto = 55.0  
         tot_galloni = fusti_prodotto * galloni_per_fusto
         spessore_inch = 16 / 25.4
         testo_prodotto = f"{tot_galloni:.1f} gallons ({fusti_prodotto:.1f} drums from 55 gal) — *thickness {spessore_inch:.2f} inch*"
     else:
-        testo_prodotto = f"{fusti_prodotto:.1f} fusti (da 200 lt — {peso_fusto:.0f} kg) — *spessore 16mm*"
+        testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {peso_fusto:.0f} kg) — *spessore 16mm*"
 
     st.markdown(f"""
     **Specifiche Tecniche:**
@@ -191,94 +191,4 @@ with col_intec:
     # Calcolo totale economico separato INTEC
     if is_us_market:
         costo_prodotto = (kg_prodotto * 2.20462) * prezzo_intec_input
-        costo_resina = (kg_r999 * 2.20462) * prezzo_resina_input
-    else:
-        costo_prodotto = kg_prodotto * prezzo_intec_input
-        costo_resina = kg_r999 * prezzo_resina_input
-
-    tot_generale_intec = costo_prodotto + costo_resina
-
-# --- COLONNA CLIENTE ---
-with col_cliente:
-    st.subheader("⚪ Metodo Attuale Cliente")
-    tecnologia = st.selectbox("Tecnologia Concorrente:", ["Epossidica", "Spray"])
-    
-    # Inserimento Quantità Separate Cliente
-    col_q_cli1, col_q_cli2 = st.columns(2)
-    with col_q_cli1:
-        label_mat_cliente = "Materiale Cliente (lbs):" if is_us_market else "Materiale Cliente (KG):"
-        kg_cliente = st.number_input(label_mat_cliente, min_value=0.0, value=0.0, step=10.0)
-    with col_q_cli2:
-        label_res_cliente = "Resina Cliente (lbs):" if is_us_market else "Resina Cliente (KG):"
-        kg_resina_cliente = st.number_input(label_res_cliente, min_value=0.0, value=0.0, step=10.0)
-    
-    # Inserimento Prezzi Separati Cliente
-    col_p_cli1, col_p_cli2 = st.columns(2)
-    with col_p_cli1:
-        label_prezzo_cliente = "Prezzo Mat. Cliente ($/lbs):" if is_us_market else "Prezzo Mat. Cliente (€/KG):"
-        prezzo_cliente = st.number_input(label_prezzo_cliente, min_value=0.0, value=0.0, step=0.5)
-    with col_p_cli2:
-        label_prezzo_res_cliente = "Costo Resina Cliente ($/lbs):" if is_us_market else "Costo Resina Cliente (€/KG):"
-        prezzo_resina_cliente = st.number_input(label_prezzo_res_cliente, min_value=0.0, value=0.0, step=0.5)
-    
-    ore_cliente = st.number_input(f"Ore totali cantiere Cliente:", min_value=0.0, value=0.0, step=1.0)
-    
-    # Calcolo totale economico Cliente (Materiale + Resina)
-    tot_generale_cliente = (kg_cliente * prezzo_cliente) + (kg_resina_cliente * prezzo_resina_cliente)
-
-st.markdown("---")
-
-# 6. GRAFICI
-st.markdown("#### 3. Impatto Visivo Risultati")
-col_chart1, col_chart2 = st.columns(2)
-
-with col_chart1:
-    fig_costi = go.Figure()
-    fig_costi.add_trace(go.Bar(
-        x=['Sistema INTEC', 'Metodo Cliente'], y=[tot_generale_intec, tot_generale_cliente],
-        marker_color=['#008F99', '#4A4A4A'],
-        text=[f"{tot_generale_intec:,.2f} {valuta}", f"{tot_generale_cliente:,.2f} {valuta}"],
-        textposition='auto', textfont=dict(color='white'), width=0.4
-    ))
-    fig_costi.update_layout(
-        height=240,
-        title=dict(text="Costo Materiali", font=dict(size=14)), 
-        yaxis=dict(showgrid=True),
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=0, r=0, t=30, b=0)
-    )
-    st.plotly_chart(fig_costi, use_container_width=True, theme="streamlit", config={'staticPlot': True})
-
-with col_chart2:
-    fig_ore = go.Figure()
-    fig_ore.add_trace(go.Bar(
-        x=['Sistema INTEC', 'Metodo Cliente'], y=[ore_intec, ore_cliente],
-        marker_color=['#008F99', '#4A4A4A'],
-        text=[f"{ore_intec:.1f} h", f"{ore_cliente:.1f} h"],
-        textposition='auto', textfont=dict(color='white'), width=0.4
-    ))
-    fig_ore.update_layout(
-        height=240,
-        title=dict(text="Ore di Lavoro", font=dict(size=14)), 
-        yaxis=dict(showgrid=True),
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-        margin=dict(l=0, r=0, t=30, b=0)
-    )
-    st.plotly_chart(fig_ore, use_container_width=True, theme="streamlit", config={'staticPlot': True})
-
-# 7. BANNER FINALE E STAMPA
-st.markdown("---")
-risparmio_economico = tot_generale_cliente - tot_generale_intec
-ore_risparmiate = ore_cliente - ore_intec
-
-col_res1, col_res2 = st.columns(2)
-with col_res1:
-    st.metric(label="TOTALE MATERIALI INTEC (IVA Incl.)", value=f"{tot_generale_intec:,.2f} {valuta}")
-with col_res2:
-    st.metric(label="TOTALE MATERIALI CLIENTE (IVA Incl.)", value=f"{tot_generale_cliente:,.2f} {valuta}")
-
-if tot_generale_cliente > 0:
-    st.success(f"💰 **Risparmio Netto sui Materiali:** {risparmio_economico:,.2f} {valuta} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore")
-
-st.markdown("---")
-st.markdown("⚠️ **Nota Tecnica:** *I tempi di indurimento e fresabilità variano in base alla temperatura e alla catalisi.*")
+        costo_resina = (
