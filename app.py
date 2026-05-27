@@ -203,3 +203,8 @@ ore_risparmiate = ore_cliente - ore_intec
 col_res1, col_res2 = st.columns(2)
 with col_res1: st.metric(label="TOTALE MATERIALI INTEC (IVA Incl.)", value=f"{tot_generale_intec:,.2f} {valuta_simbolo}")
 with col_res2: st.metric(label="TOTALE MATERIALI CLIENTE (IVA Incl.)", value=f"{tot_generale_cliente:,.2f} {valuta_simbolo}")
+
+if tot_generale_cliente > 0: st.success(f"💰 **Risparmio Netto sui Materiali:** {risparmio_economico:,.2f} {valuta_simbolo} | ⏱️ **Tempo Guadagnato:** {ore_risparmiate:.1f} ore")
+
+st.markdown("---")
+st.markdown("<p style='font-size: 11px; font-style: italic; margin-top: 0;'>⚠️ <b>Nota Tecnica:</b> I tempi di indurimento, fresabilità e finitura variano in base alle condizioni ambientali e alla catalisi.</p>", unsafe_allow_html=True)
