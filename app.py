@@ -16,7 +16,7 @@ def get_image_base64(path):
 logo_positive = get_image_base64("INTEC-logo-V1-2colori-POSITIVE.png")
 logo_negative = get_image_base64("INTEC-logo-V1-2colori-NEGATIVE.png")
 
-# CSS: GESTIONE STAMPA E ALLINEAMENTO BOX
+# CSS AGGIORNATO: GESTIONE STAMPA E BOX INFORMATIVI
 st.markdown(f"""
     <style>
         .block-container {{ padding-top: 2.5rem !important; padding-bottom: 0.5rem !important; }}
@@ -42,11 +42,13 @@ st.markdown(f"""
             .logo-dark {{ display: none !important; }}
             .logo-light {{ display: block !important; width: 250px !important; margin: 0 auto 10px auto !important; }}
             
+            /* GRAFICI A DIMENSIONE FISSA IN STAMPA */
             .stPlotlyChart {{ width: 330px !important; margin: 0 auto !important; display: block !important; }}
             
             div[data-testid="column"] {{ width: 48% !important; flex: 1 1 48% !important; display: inline-block !important; vertical-align: top; }}
             div[data-testid="stMetric"] {{ padding: 0 !important; margin: 0 !important; }}
             
+            /* STILE BOX INFORMATIVI PER STAMPA */
             div[data-testid="stAlert"] {{ background-color: white !important; border: 2px solid #008F99 !important; padding: 10px !important; color: black !important; margin-bottom: 10px !important; }}
             div[data-testid="stAlert"] * {{ color: black !important; }}
             
@@ -73,10 +75,6 @@ with col_hdr1: nome_commerciale = st.text_input("💼 Nome Commerciale INTEC:", 
 with col_hdr2: nome_cliente = st.text_input("👤 Nome Cliente / Cantiere:", placeholder="Es. Cantiere Navale Rossi")
 with col_hdr3: data_offerta = st.date_input("📅 Data Offerta:", value=datetime.date.today(), format="DD/MM/YYYY")
 
-commerciale_display = nome_commerciale if nome_commerciale else "Non specificato"
-cliente_display = nome_cliente if nome_cliente else "Non specificato"
-st.markdown(f"<div class='print-text' style='text-align: center;'><b>💼 Commerciale INTEC:</b> {commerciale_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>👤 Cliente/Cantiere:</b> {cliente_display} &nbsp;&nbsp;|&nbsp;&nbsp; <b>📅 Data:</b> {data_offerta.strftime('%d/%m/%Y')}</div>", unsafe_allow_html=True)
-
 st.markdown("---")
 
 # 3. CONFIGURAZIONE PROGETTO
@@ -88,12 +86,8 @@ with col_gen2: unita = st.selectbox("Unità di Misura:", ["Metri Quadri (m²)", 
 with col_gen3: valuta = st.selectbox("Valuta:", ["Euro (€)", "Dollaro ($)"])
 
 # Calcolo superfici base
-if unita == "Metri Quadri (m²)":
-    superficie_m2 = superficie
-    superficie_sqft = superficie * 10.7639
-else:
-    superficie_sqft = superficie
-    superficie_m2 = superficie / 10.7639
+superficie_m2 = superficie if unita == "Metri Quadri (m²)" else superficie / 10.7639
+superficie_sqft = superficie * 10.7639 if unita == "Metri Quadri (m²)" else superficie
 
 is_dollar = (valuta == "Dollaro ($)")
 is_sqft = (unita == "Piedi Quadri (sq ft)")
@@ -120,8 +114,8 @@ with col_r_int:
     st.markdown("""
         <div style="margin-bottom: 1rem;">
             <label style="font-size: 14px; display: block; margin-bottom: 0.5rem; color: inherit;">Tecnologia INTEC:</label>
-            <div style="height: 39px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
-                <b>🛠️ Intec R999</b> &nbsp;|&nbsp; <b>⚖️ Rapporto impregnazione:</b> 1:2,5
+            <div style="height: 39.6px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
+                <b>🛠️ R999 Intec</b> &nbsp;|&nbsp; <b>⚖️ Rapporto impregnazione:</b> 1:2,5
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -181,7 +175,7 @@ with col_r_cli:
     
     col_c_row2_1, col_c_row2_2 = st.columns(2)
     with col_c_row2_1:
-        metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
+        metodo_app_cliente = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
     with col_c_row2_2:
         quantita_r_cliente = st.number_input(f"Quantità Utilizzata Resina ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0)
     
@@ -197,7 +191,7 @@ with col_r_cli:
     with col_c_row4_1:
         ore_r_cliente = st.number_input(f"Ore necessarie Resina:", min_value=0.0, value=0.0, step=1.0)
     with col_c_row4_2:
-        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente Resina ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
     
     costo_mat_r_cliente = quantita_r_cliente * prezzo_r_cliente
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
@@ -227,14 +221,19 @@ with col_p_int:
     st.markdown("##### <span style='color:#008F99;'>🟢 Sistema INTEC (Paste)</span>", unsafe_allow_html=True)
     prodotto_intec = st.selectbox("Prodotto Base:", ["PF07E", "PF07LS", "PF10E", "PF10GT", "PV10E"])
     
-    # Box di testo simulato per pareggiare perfettamente il menu a tendina "Metodo" del Cliente
-    st.markdown("""
-        <div style="margin-bottom: 1rem;">
-            <div style="height: 39px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
-                <b>🛠️ Metodo Applicazione INTEC:</b> &nbsp; Estrusione
+    col_ip_r2_1, col_ip_r2_2 = st.columns(2)
+    with col_ip_r2_1:
+        st.markdown("""
+            <div style="margin-bottom: 0px;">
+                <label style="font-size: 14px; display: block; margin-bottom: 0.5rem; color: inherit;">Metodo Applicazione INTEC:</label>
+                <div style="height: 39.6px; display: flex; align-items: center; background-color: rgba(128, 128, 128, 0.1); border-radius: 8px; padding: 0 12px; border: 1px solid rgba(128, 128, 128, 0.2); font-size: 14px;">
+                    <b>🛠️ Estrusione</b>
+                </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+    with col_ip_r2_2:
+        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+        st.text("Resa calcolata automaticamente")
     
     peso_specifico = 0.7 if "07" in prodotto_intec else 1.0
     kg_prodotto = superficie_m2 * (20.0 * peso_specifico)
@@ -245,14 +244,18 @@ with col_p_int:
     else:
         testo_prodotto = f"{fusti_prodotto:.1f} fusti (da {200.0 * peso_specifico:.0f} kg) — *spessore 16mm*"
     
-    col_prezzi_p1, col_prezzi_p2 = st.columns(2)
-    with col_prezzi_p1:
+    col_ip_r3_1, col_ip_r3_2 = st.columns(2)
+    with col_ip_r3_1:
         prezzo_pasta_input = st.number_input(f"Prezzo {prodotto_intec} ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=10.70, step=0.1)
-    with col_prezzi_p2:
-        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+    with col_ip_r3_2:
+        pass # Spazio lasciato vuoto volutamente per pareggiare
         
-    ore_paste_base = round(superficie_m2 / 5.0, 2)
-    ore_paste_intec = st.number_input("Ore manodopera Paste INTEC:", min_value=0.0, value=float(ore_paste_base), step=0.5)
+    col_ip_r4_1, col_ip_r4_2 = st.columns(2)
+    with col_ip_r4_1:
+        ore_paste_base = round(superficie_m2 / 5.0, 2)
+        ore_paste_intec = st.number_input("Ore manodopera INTEC:", min_value=0.0, value=float(ore_paste_base), step=0.5)
+    with col_ip_r4_2:
+        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
 
     costo_mat_p_intec = (kg_prodotto * 2.20462 if is_sqft else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
@@ -260,6 +263,7 @@ with col_p_int:
     
     st.info(f"""**Specifiche Paste:**
 - 📦 **Prodotto:** {prodotto_intec}
+- 🛠️ **Metodo:** Estrusione
 - 📐 **Volume Stimato:** {testo_prodotto}
 - ⏱️ **Manodopera:** {ore_paste_intec:.1f} h *(1 persona sola)*""")
     
@@ -271,21 +275,31 @@ with col_p_cli:
     st.markdown("##### <span style='color:#4A4A4A;'>⚪ Metodo Cliente (Paste)</span>", unsafe_allow_html=True)
     tecnologia_p_cliente = st.selectbox("Tecnologia Concorrente Paste:", ["Epossidica", "Spraycore"])
     
-    metodo_p_cliente = st.selectbox("Metodo Applicazione Paste Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
+    col_cp_r2_1, col_cp_r2_2 = st.columns(2)
+    with col_cp_r2_1:
+        metodo_p_cliente = st.selectbox("Metodo Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
+    with col_cp_r2_2:
+        quantita_p_cliente = st.number_input(f"Quantità Utilizzata Paste ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0)
     
-    col_c_op1, col_c_op2 = st.columns(2)
-    with col_c_op1:
-        costo_mat_p_cliente = st.number_input(f"Costo Totale Materiale Paste ({valuta_simbolo}):", min_value=0.0, value=0.0, step=10.0)
-    with col_c_op2:
-        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+    col_cp_r3_1, col_cp_r3_2 = st.columns(2)
+    with col_cp_r3_1:
+        prezzo_p_cliente = st.number_input(f"Prezzo Paste Cliente ({valuta_simbolo}/{unita_peso_str}):", min_value=0.0, value=0.0, step=0.1)
+    with col_cp_r3_2:
+        pass # Spazio lasciato vuoto volutamente per pareggiare
         
-    ore_p_cliente = st.number_input("Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0)
+    col_cp_r4_1, col_cp_r4_2 = st.columns(2)
+    with col_cp_r4_1:
+        ore_p_cliente = st.number_input("Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0)
+    with col_cp_r4_2:
+        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
         
+    costo_mat_p_cliente = quantita_p_cliente * prezzo_p_cliente
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
     tot_fase2_cliente = costo_mat_p_cliente + costo_mano_p_cliente
     
     st.info(f"""**Specifiche Applicazione Paste:**
 - 🛠️ **Tecnologia:** {tecnologia_p_cliente} ({metodo_p_cliente})
+- 🧪 **Resa Materiale:** {quantita_p_cliente:.2f} {unita_peso_str}
 - ⏱️ **Manodopera:** {ore_p_cliente:.1f} h *(1 persona sola)*""")
     
     st.markdown(f"<div class='print-text'><b>Fase 2 Cliente ({tecnologia_p_cliente}):</b><br>- Costo Mat.: {costo_mat_p_cliente:.2f} {valuta_simbolo}<br>- Ore: {ore_p_cliente:.1f} h (a {costo_orario_p_cliente:.2f} {valuta_simbolo}/h)<br>- Subtotale: {tot_fase2_cliente:.2f} {valuta_simbolo}</div>", unsafe_allow_html=True)
