@@ -150,9 +150,9 @@ with col_r_int:
         
     col_i_row4_1, col_i_row4_2 = st.columns(2)
     with col_i_row4_1:
-        ore_r999_intec = st.number_input("Ore manodopera INTEC:", min_value=0.0, value=float(ore_r999_base), step=0.5)
+        ore_r999_intec = st.number_input("Ore manodopera Laminazione INTEC:", min_value=0.0, value=float(ore_r999_base), step=0.5)
     with col_i_row4_2:
-        costo_orario_r_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        costo_orario_r_intec = st.number_input(f"Tariffa Lavoro Laminazione ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
     
     costo_mat_r_intec = (kg_r999 * 2.20462 if is_sqft else kg_r999) * prezzo_resina_input
     costo_mano_r_intec = ore_r999_intec * costo_orario_r_intec
@@ -175,7 +175,7 @@ with col_r_cli:
     
     col_c_row2_1, col_c_row2_2 = st.columns(2)
     with col_c_row2_1:
-        metodo_app_cliente = st.selectbox("Metodo di Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
+        metodo_app_cliente = st.selectbox("Metodo di Applicazione Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
     with col_c_row2_2:
         quantita_r_cliente = st.number_input(f"Quantità Utilizzata Resina ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0)
     
@@ -191,7 +191,7 @@ with col_r_cli:
     with col_c_row4_1:
         ore_r_cliente = st.number_input(f"Ore necessarie Resina:", min_value=0.0, value=0.0, step=1.0)
     with col_c_row4_2:
-        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        costo_orario_r_cliente = st.number_input(f"Tariffa Lavoro Cliente Resina ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
     
     costo_mat_r_cliente = quantita_r_cliente * prezzo_r_cliente
     costo_mano_r_cliente = ore_r_cliente * costo_orario_r_cliente
@@ -253,9 +253,9 @@ with col_p_int:
     col_ip_r4_1, col_ip_r4_2 = st.columns(2)
     with col_ip_r4_1:
         ore_paste_base = round(superficie_m2 / 5.0, 2)
-        ore_paste_intec = st.number_input("Ore manodopera INTEC:", min_value=0.0, value=float(ore_paste_base), step=0.5)
+        ore_paste_intec = st.number_input("Ore manodopera Paste INTEC:", min_value=0.0, value=float(ore_paste_base), step=0.5)
     with col_ip_r4_2:
-        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro INTEC ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        costo_orario_p_intec = st.number_input(f"Tariffa Lavoro Paste ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
 
     costo_mat_p_intec = (kg_prodotto * 2.20462 if is_sqft else kg_prodotto) * prezzo_pasta_input
     costo_mano_p_intec = ore_paste_intec * costo_orario_p_intec
@@ -277,7 +277,7 @@ with col_p_cli:
     
     col_cp_r2_1, col_cp_r2_2 = st.columns(2)
     with col_cp_r2_1:
-        metodo_p_cliente = st.selectbox("Metodo Applicazione:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
+        metodo_p_cliente = st.selectbox("Metodo Applicazione Paste Cliente:", ["Applicazione manuale", "Applicazione con taglio e spruzzo"])
     with col_cp_r2_2:
         quantita_p_cliente = st.number_input(f"Quantità Utilizzata Paste ({unita_peso_str}):", min_value=0.0, value=0.0, step=1.0)
     
@@ -291,7 +291,7 @@ with col_p_cli:
     with col_cp_r4_1:
         ore_p_cliente = st.number_input("Ore necessarie Paste:", min_value=0.0, value=0.0, step=1.0)
     with col_cp_r4_2:
-        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
+        costo_orario_p_cliente = st.number_input(f"Tariffa Lavoro Paste Cliente ({valuta_simbolo}/h):", min_value=0.0, value=35.0, step=1.0)
         
     costo_mat_p_cliente = quantita_p_cliente * prezzo_p_cliente
     costo_mano_p_cliente = ore_p_cliente * costo_orario_p_cliente
